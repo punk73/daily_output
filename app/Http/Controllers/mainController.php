@@ -21,7 +21,12 @@ class mainController extends Controller
                 Carbon::createFromFormat('Y-m-d', $req->start_date )->addWeek() ]  );
         }
 
-        $do = $do->get();
+        //pagination
+        if ( $req->limit !=null && $req->start != null ){
+            $do = $do->paginate($req->limit - $req->start );
+        }else{
+            $do = $do->paginate(15);
+        }
 
         //jika jumlah $do > 0 maka $message = data found, otherwise data not found;
         if (count($do) > 0) {
@@ -30,15 +35,22 @@ class mainController extends Controller
             $message = 'Data not found';
         }
 
-    	return [
+    	/*return [
     		'_meta'=>[
 					'message'=>$message,
 					'count'=> count($do)
 				],
-    		'result'=> $do
+    		'data'=> $do->data
     	];
-    }
 
+        $do['_meta'] = [
+            'message'=>$message,
+            'count'=> count($do)
+        ];*/
+
+        return $do;
+    }
+    
     public function show(Request $req){
     	$id = $req->id;
 		$do = Daily_output::find($id);
@@ -51,13 +63,15 @@ class mainController extends Controller
             $message = 'Data not found';
         }
 
+
+
         return [
             '_meta'=>[
                 'message'=> $message ,
                 'count'=> count($do)
             ],
 
-            'result'=> $do
+            'data'=> $do
         ]; 
     }
 
@@ -164,7 +178,7 @@ class mainController extends Controller
                     'userMessage'=> "Data updated",
                     'count'=>count($Daily_output)
                 ],
-                 'result'=>$Daily_output
+                 'data'=>$Daily_output
             ];
         }
     }
