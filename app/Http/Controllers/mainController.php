@@ -21,9 +21,14 @@ class mainController extends Controller
                 Carbon::createFromFormat('Y-m-d', $req->start_date )->addWeek() ]  );
         }
 
+        if( $req->tanggal != null ){
+
+            $do = $do->where('tanggal','=', $req->tanggal ) ;
+        }
+
         //pagination
-        if ( $req->limit !=null && $req->start != null ){
-            $do = $do->paginate($req->limit - $req->start );
+        if ( $req->limit !=null){
+            $do = $do->paginate($req->limit);
         }else{
             $do = $do->paginate(15);
         }
@@ -47,6 +52,15 @@ class mainController extends Controller
             'message'=>$message,
             'count'=> count($do)
         ];*/
+
+        $additional_message = collect(['_meta'=> [
+                    'message'=>$message,
+                    'count'=> count($do)
+                ] ]);
+        //adding additional message
+        $do = $additional_message->merge($do);
+        //$do is object, need to changes to array first!
+        $do = $do->toArray();
 
         return $do;
     }
@@ -85,7 +99,11 @@ class mainController extends Controller
     	$osc_output = $req->osc_output;
     	$plus_minus = $req->plus_minus;
     	$lost_hour = $req->lost_hour;
-    	$delay_type = $req->delay_type;
+    	
+        //delay type changes to column
+
+        $delay_type = $req->delay_type;
+
     	$problem = $req->problem;
     	$dic = $req->dic; //department in charge
     	$action = $req->action;
@@ -102,8 +120,18 @@ class mainController extends Controller
     	$Daily_output->osc_output = $osc_output;
     	$Daily_output->plus_minus = $plus_minus;
     	$Daily_output->lost_hour = $lost_hour;
+        //new column
+        $Daily_output->board_delay = $req->board_delay;
+        $Daily_output->part_delay = $req->part_delay;
+        $Daily_output->eqp_trouble = $req->eqp_trouble;
+        $Daily_output->quality_problem_delay = $req->quality_problem_delay;
+        $Daily_output->bal_problem = $req->bal_problem;
+        $Daily_output->others = $req->others;
+        $Daily_output->support = $req->support;
+        $Daily_output->change_model = $req->change_model;
+        //end new column
     	$Daily_output->delay_type = $delay_type;
-    	$Daily_output->problem = $problem;
+        $Daily_output->problem = $problem;
     	$Daily_output->dic = $dic;
     	$Daily_output->action = $action;
     	$Daily_output->users_id = $users_id;
@@ -162,6 +190,16 @@ class mainController extends Controller
     	$Daily_output->osc_output = $req->osc_output;
     	$Daily_output->plus_minus = $req->plus_minus;
     	$Daily_output->lost_hour = $req->lost_hour;
+        //new column
+        $Daily_output->board_delay = $req->board_delay;
+        $Daily_output->part_delay = $req->part_delay;
+        $Daily_output->eqp_trouble = $req->eqp_trouble;
+        $Daily_output->quality_problem_delay = $req->quality_problem_delay;
+        $Daily_output->bal_problem = $req->bal_problem;
+        $Daily_output->others = $req->others;
+        $Daily_output->support = $req->support;
+        $Daily_output->change_model = $req->change_model;
+        //end new column
     	$Daily_output->delay_type = $req->delay_type;
     	$Daily_output->problem = $req->problem;
     	$Daily_output->dic = $req->dic;

@@ -16,20 +16,20 @@ class AddTableDailyOutput extends Migration
         Schema::create('daily_outputs', function (Blueprint $table) {
             //
             $table->increments('id');
-            $table->string('line_name', 15);
-            $table->string('time', 15); // 16-17 or 06-07
-            $table->integer('minute'); //50 menit, 40 menit
-            $table->integer('target_sop');
-            $table->integer('osc_output');
-            $table->integer('plus_minus');
-            $table->float('lost_hour', 8, 2);
-            $table->string('delay_type', 80);
-            $table->text('problem');
-            $table->string('dic', 30); //department in charge
-            $table->text('action');
-            $table->integer('users_id');
-            $table->string('shift', 5);
-            $table->date('tanggal');
+            $table->string('line_name', 15)->nullable();
+            $table->string('time', 15)->nullable(); // 16-17 or 06-07
+            $table->integer('minute')->nullable(); //50 menit, 40 menit
+            $table->integer('target_sop')->nullable();
+            $table->integer('osc_output')->nullable();
+            $table->integer('plus_minus')->nullable();
+            $table->float('lost_hour', 8, 2)->nullable();
+            $table->string('delay_type', 80)->nullable();
+            $table->text('problem')->nullable();
+            $table->string('dic', 30)->nullable(); //department in charge
+            $table->text('action')->nullable();
+            $table->integer('users_id')->nullable();
+            $table->string('shift', 5)->nullable();
+            $table->date('tanggal')->nullable();
             $table->timestamps();
         });
     }
