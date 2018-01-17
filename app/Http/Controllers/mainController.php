@@ -15,16 +15,29 @@ class mainController extends Controller
         $do = DB::table('daily_outputs');
 
         //kalau get ada parameter start_date, maka yang muncul adalah between start_date s/d start_date->addWeek()
+
+        // parameter tanggal
         if( $req->start_date != null ){
 
             $do = $do->whereBetween('tanggal', [Carbon::createFromFormat('Y-m-d', $req->start_date ), 
                 Carbon::createFromFormat('Y-m-d', $req->start_date )->addWeek() ]  );
         }
 
+        /*parameter tanggal*/
         if( $req->tanggal != null ){
 
             $do = $do->where('tanggal','=', $req->tanggal ) ;
             // return $req->tanggal;
+        }
+
+        if ($req->shift != null) {
+            # code...
+            $do = $do->where('shift', '=', $req->shift);
+        }
+
+        if ($req->line_name != null) {
+            # code...
+            $do = $do->where('line_name', '=', $req->line_name);
         }
 
         //pagination
@@ -40,19 +53,6 @@ class mainController extends Controller
         }else{
             $message = 'Data not found';
         }
-
-    	/*return [
-    		'_meta'=>[
-					'message'=>$message,
-					'count'=> count($do)
-				],
-    		'data'=> $do->data
-    	];
-
-        $do['_meta'] = [
-            'message'=>$message,
-            'count'=> count($do)
-        ];*/
 
         $additional_message = collect(['_meta'=> [
                     'message'=>$message,
@@ -124,14 +124,14 @@ class mainController extends Controller
         if(!$Daily_output->osc_output){$Daily_output->osc_output = null; }
         if(!$Daily_output->plus_minus){$Daily_output->plus_minus = null; }
         if(!$Daily_output->lost_hour){$Daily_output->lost_hour = null; }
-        if(!$Daily_output->board_delay){$Daily_output->board_delay = null; }
-        if(!$Daily_output->part_delay){$Daily_output->part_delay = null; }
-        if(!$Daily_output->eqp_trouble){$Daily_output->eqp_trouble = null; }
-        if(!$Daily_output->quality_problem_delay){$Daily_output->quality_problem_delay = null; }
-        if(!$Daily_output->bal_problem){$Daily_output->bal_problem = null; }
-        if(!$Daily_output->others){$Daily_output->others = null; }
-        if(!$Daily_output->support){$Daily_output->support = null; }
-        if(!$Daily_output->change_model){$Daily_output->change_model = null; }
+        if(!$Daily_output->board_delay){$Daily_output->board_delay = 0; }
+        if(!$Daily_output->part_delay){$Daily_output->part_delay = 0; }
+        if(!$Daily_output->eqp_trouble){$Daily_output->eqp_trouble = 0; }
+        if(!$Daily_output->quality_problem_delay){$Daily_output->quality_problem_delay = 0; }
+        if(!$Daily_output->bal_problem){$Daily_output->bal_problem = 0; }
+        if(!$Daily_output->others){$Daily_output->others = 0; }
+        if(!$Daily_output->support){$Daily_output->support = 0; }
+        if(!$Daily_output->change_model){$Daily_output->change_model = 0; }
         if(!$Daily_output->users_id){$Daily_output->users_id = null; }
 
     	$Daily_output->save();
@@ -235,14 +235,14 @@ class mainController extends Controller
             if(!$Daily_output->osc_output){$Daily_output->osc_output = null; }
             if(!$Daily_output->plus_minus){$Daily_output->plus_minus = null; }
             if(!$Daily_output->lost_hour){$Daily_output->lost_hour = null; }
-            if(!$Daily_output->board_delay){$Daily_output->board_delay = null; }
-            if(!$Daily_output->part_delay){$Daily_output->part_delay = null; }
-            if(!$Daily_output->eqp_trouble){$Daily_output->eqp_trouble = null; }
-            if(!$Daily_output->quality_problem_delay){$Daily_output->quality_problem_delay = null; }
-            if(!$Daily_output->bal_problem){$Daily_output->bal_problem = null; }
-            if(!$Daily_output->others){$Daily_output->others = null; }
-            if(!$Daily_output->support){$Daily_output->support = null; }
-            if(!$Daily_output->change_model){$Daily_output->change_model = null; }
+            if(!$Daily_output->board_delay){$Daily_output->board_delay = 0; }
+            if(!$Daily_output->part_delay){$Daily_output->part_delay = 0; }
+            if(!$Daily_output->eqp_trouble){$Daily_output->eqp_trouble = 0; }
+            if(!$Daily_output->quality_problem_delay){$Daily_output->quality_problem_delay = 0; }
+            if(!$Daily_output->bal_problem){$Daily_output->bal_problem = 0; }
+            if(!$Daily_output->others){$Daily_output->others = 0; }
+            if(!$Daily_output->support){$Daily_output->support = 0; }
+            if(!$Daily_output->change_model){$Daily_output->change_model = 0; }
             if(!$Daily_output->users_id){$Daily_output->users_id = null; }
         //END ERROR HANDLER
 
