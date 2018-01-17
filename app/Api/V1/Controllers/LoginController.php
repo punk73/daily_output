@@ -15,6 +15,8 @@ class LoginController extends Controller
     {
         $credentials = $request->only(['name', 'password']);
 
+        // return $credentials;
+
         try {
             $token = $JWTAuth->attempt($credentials);
 

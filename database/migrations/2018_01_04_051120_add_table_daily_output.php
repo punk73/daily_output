@@ -23,6 +23,17 @@ class AddTableDailyOutput extends Migration
             $table->integer('osc_output')->nullable();
             $table->integer('plus_minus')->nullable();
             $table->float('lost_hour', 8, 2)->nullable();
+
+            $table->float('board_delay', 8, 2)->nullable()->default(0);
+            $table->float('part_delay', 8, 2)->nullable()->default(0);
+            $table->float('eqp_trouble', 8, 2)->nullable()->default(0);
+            $table->float('quality_problem_delay', 8, 2)->nullable()->default(0);
+            $table->float('bal_problem', 8, 2)->nullable()->default(0);
+            $table->float('others', 8, 2)->nullable()->default(0);
+            $table->float('support', 8, 2)->nullable()->default(0);
+            $table->float('change_model', 8, 2)->nullable()->default(0);
+            
+
             $table->string('delay_type', 80)->nullable();
             $table->text('problem')->nullable();
             $table->string('dic', 30)->nullable(); //department in charge
