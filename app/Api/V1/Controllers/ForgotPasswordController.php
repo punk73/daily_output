@@ -13,14 +13,14 @@ class ForgotPasswordController extends Controller
 {
     public function sendResetEmail(ForgotPasswordRequest $request)
     {
-        $user = User::where('email', '=', $request->get('email'))->first();
+        $user = User::where('name', '=', $request->get('name'))->first();
 
         if(!$user) {
             throw new NotFoundHttpException();
         }
 
         $broker = $this->getPasswordBroker();
-        $sendingResponse = $broker->sendResetLink($request->only('email'));
+        $sendingResponse = $broker->sendResetLink($request->only('name'));
 
         if($sendingResponse !== Password::RESET_LINK_SENT) {
             throw new HttpException(500);

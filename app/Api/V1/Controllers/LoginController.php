@@ -13,7 +13,7 @@ class LoginController extends Controller
 {
     public function login(LoginRequest $request, JWTAuth $JWTAuth)
     {
-        $credentials = $request->only(['email', 'password']);
+        $credentials = $request->only(['name', 'password']);
 
         try {
             $token = $JWTAuth->attempt($credentials);

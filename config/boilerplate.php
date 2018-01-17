@@ -6,21 +6,21 @@ return [
         'release_token' => env('SIGN_UP_RELEASE_TOKEN'),
         'validation_rules' => [
             'name' => 'required',
-            'email' => 'required|email',
+            // 'email' => 'required',
             'password' => 'required'
         ]
     ],
 
     'login' => [
         'validation_rules' => [
-            'email' => 'required|email',
+            'name' => 'required',
             'password' => 'required'
         ]
     ],
 
     'forgot_password' => [
         'validation_rules' => [
-            'email' => 'required|email'
+            'name' => 'required'
         ]
     ],
 
@@ -28,7 +28,9 @@ return [
         'release_token' => env('PASSWORD_RESET_RELEASE_TOKEN', false),
         'validation_rules' => [
             'token' => 'required',
-            'email' => 'required|email',
+            // 'email' => 'required',
+            'name' => 'required',
+
             'password' => 'required|confirmed'
         ]
     ]

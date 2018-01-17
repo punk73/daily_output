@@ -14,6 +14,7 @@ class SignUpController extends Controller
     public function signUp(SignUpRequest $request, JWTAuth $JWTAuth)
     {
         $user = new User($request->all());
+        
         if(!$user->save()) {
             throw new HttpException(500);
         }
