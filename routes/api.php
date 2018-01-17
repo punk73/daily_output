@@ -1,6 +1,7 @@
 <?php
 
 use Dingo\Api\Routing\Router;
+// use Auth;
 
 /** @var Router $api */
 $api = app(Router::class);
@@ -30,6 +31,14 @@ $api->version('v1', function (Router $api) {
                 ]);
             }
         ]);
+
+        $api->get('auth/me', 
+            function() {
+                return response()->json(
+                    Auth::user()
+                );
+            }
+        );
 
 
 
