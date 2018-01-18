@@ -53,10 +53,12 @@ $api->version('v1', function (Router $api) {
     //route for daily outputs
     Route::prefix('daily_outputs')->group(function(){
         Route::get('/', 'mainController@index' );
+        Route::get('/download', 'mainController@download' );
         Route::post('/', 'mainController@store' );
         Route::get('/{id}', 'mainController@show' );
         Route::delete('/{id}', 'mainController@delete' );
         Route::put('/{id}', 'mainController@update' );
+
     });
 
 });
