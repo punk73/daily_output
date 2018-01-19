@@ -132,6 +132,7 @@ class mainController extends Controller
 
 
         $data = [];
+        $i = 0;
         foreach ($do as $key => $value) {
             # code...
             $username = User::find($value->users_id);
@@ -156,10 +157,47 @@ class mainController extends Controller
                 "Problem"=> $value->problem,
                 "DIC"=> $value->dic,
                 "action"=> $value->action,
+                "tanggal" => $value->tanggal,
                 "Leader"=> $username    
             ];
 
+            if( ($i % 10 == 0) and ($i != 0) ){
+               if($i == 10){ //perulangan pertama
+                $awal = 2;
+                $akhir = 11;
+               }else{ //sisanya
+                $awal = $awal + 11;
+                $akhir = $akhir + 11;
+               }
+
+               $total = [
+                    "Line"=> "",
+                    "Time"=> "Total",
+                    "minute"=> "=sum(C".$awal.":C".$akhir.")",
+                    "tgt SOP"=> "",
+                    "OSC Output"=> "",
+                    "+ / -"=> "",
+                    "Lost Hour"=> "",
+                    "Board Delay"=> "=sum(H".$awal.":H".$akhir.")" ,
+                    "Part Delay"=> "=sum(I".$awal.":I".$akhir.")",
+                    "EQP Trouble"=> "=sum(J".$awal.":J".$akhir.")",
+                    "Quality Prob"=> "=sum(K".$awal.":K".$akhir.")",
+                    "Bal Prob"=> "=sum(L".$awal.":L".$akhir.")",
+                    "OTHERS"=> "=sum(M".$awal.":M".$akhir.")",
+                    "Support (must Zero)"=> "=sum(N".$awal.":N".$akhir.")",
+                    "Change model"=> "=sum(O".$awal.":O".$akhir.")",
+                    "Problem"=> "",
+                    "DIC"=> "",
+                    "action"=> "",
+                    "tanggal" => $value->tanggal,
+                    "Leader"=> $username 
+                ];
+
+                $data[] = $total;
+            }
+
             $data[] = $row;
+            $i++; //add counter
         }
         $range = 'A1:S'.(count($data)+1);
         // return $data;
@@ -175,10 +213,10 @@ class mainController extends Controller
                     )
                 ));
                 
-
                 /*write data to excel*/
                 $sheet->fromArray($data)
-                      ->setBorder($range , 'thin');
+                      ->setBorder($range , 'thin');      
+
                 $sheet->row(1, function($row) { 
                     $row->setBackground('#CCCCCC');
                     $row->setFont(array(
@@ -187,11 +225,23 @@ class mainController extends Controller
                         'bold'       =>  true
                     ));
                 });
+
+                $sheet->row(function ($row){
+                    $i = 0;
+                    $row->each(function($row){
+                        if($i % 11 == 0 and $i != 0){
+                            $row->setBackground('#5a6068');
+                            $this->setBackground('#5a6068');
+                        }
+                        $i++;
+                    });
+                });
+                
                 
                 //set background color for column delay type
-                $sheet->cells('I1:P1', function($cells) {
+                $sheet->cells('H1:O1', function($cells) {
                     // manipulate the range of cells
-                    $cells->setBackground('#f4a445');
+                    $cells->setBackground('#f4a445'); /*orange*/
                     $cells->setTextRotation(90);
                 })->setWidth(array(
                     'I' => 5 ,
@@ -203,10 +253,10 @@ class mainController extends Controller
                     'O' => 5 ,
                     'P' => 5 ,
                 ));
-
                 // freeze column header
                 $sheet->freezeFirstRow();
             });
+
         })->download('xls');
 
     }
