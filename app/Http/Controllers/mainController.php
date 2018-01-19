@@ -124,9 +124,31 @@ class mainController extends Controller
         # code...
         $do = DB::table('daily_outputs');
         
+        /*get tanggal*/
         if($req->tanggal != null){
             $do= $do->where('tanggal','=', $req->tanggal);
         }
+
+        /*get shift*/
+        if($req->shift != null){
+            $do= $do->where('shift','=', $req->shift);
+        }
+
+        /*get line name*/
+        if($req->line_name != null){
+            $do= $do->where('line_name','=', $req->line_name);
+        }
+
+
+        // get tanggal between
+        if($req->start_date != null && $req->end_date != null ){
+            
+            $start_date=Carbon::createFromFormat('Y-m-d', $req->start_date );
+            $end_date = Carbon::createFromFormat('Y-m-d', $req->end_date );
+
+            $do = $do->whereBetween('tanggal', [ $start_date , 
+                $end_date ]  );
+        }        
 
         $do = $do->get();
 
@@ -169,6 +191,9 @@ class mainController extends Controller
                 $awal = $awal + 11;
                 $akhir = $akhir + 11;
                }
+               //username ganti, 
+               $username = User::find($do[$awal]->users_id);
+               $username = $username['name'];
 
                $total = [
                     "Line"=> "",
@@ -189,7 +214,7 @@ class mainController extends Controller
                     "Problem"=> "",
                     "DIC"=> "",
                     "action"=> "",
-                    "tanggal" => $value->tanggal,
+                    "tanggal" => $do[$awal]->tanggal,
                     "Leader"=> $username 
                 ];
 
@@ -200,7 +225,7 @@ class mainController extends Controller
             $i++; //add counter
         }
         $range = 'A1:S'.(count($data)+1);
-        // return $data;
+       
         Excel::create('DAILY OUTPUT CONTROL SHEET', function($excel  ) use ($data, $range ){
             // Call writer methods header_remove()
             $excel->sheet('daily output', function($sheet) use($data, $range) {
