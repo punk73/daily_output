@@ -8,6 +8,8 @@ use App\User;
 use DB;
 use Carbon\Carbon;
 use Excel;
+use Dingo\Api\Routing\Helpers;
+use JWTAuth;
 
 class mainController extends Controller
 {
@@ -312,6 +314,7 @@ class mainController extends Controller
 
     public function store(Request $req)
     {
+        $currentUser = JWTAuth::parseToken()->authenticate();
 
     	$Daily_output = new Daily_output;
     	$Daily_output->line_name = $req->input('line_name', null);
@@ -368,6 +371,8 @@ class mainController extends Controller
     public function delete(Request $req)
     {
     	# code...
+        $currentUser = JWTAuth::parseToken()->authenticate();
+
     	$Daily_output = Daily_output::find($req->id);
         if( !empty($Daily_output) )
         {
@@ -396,6 +401,7 @@ class mainController extends Controller
     public function update(Request $req)
     {
     	# code...
+        $currentUser = JWTAuth::parseToken()->authenticate();        
 
         $Daily_output = Daily_output::find($req->id);
         
