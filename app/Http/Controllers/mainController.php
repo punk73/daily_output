@@ -365,7 +365,8 @@ class mainController extends Controller
     			'status'=> "SUCCESS",
     			'userMessage'=> "Data saved",
     			'count'=>count($Daily_output)
-    		]
+    		],
+            'data'=>$Daily_output
     	];		
     }
 
