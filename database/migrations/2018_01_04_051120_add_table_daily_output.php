@@ -18,11 +18,11 @@ class AddTableDailyOutput extends Migration
             $table->increments('id');
             $table->string('line_name', 15)->nullable();
             $table->string('time', 15)->nullable(); // 16-17 or 06-07
-            $table->integer('minute')->nullable(); //50 menit, 40 menit
-            $table->integer('target_sop')->nullable();
-            $table->integer('osc_output')->nullable();
-            $table->integer('plus_minus')->nullable();
-            $table->float('lost_hour', 8, 2)->nullable();
+            $table->integer('minute')->nullable()->default(0); //50 menit, 40 menit
+            $table->integer('target_sop')->nullable()->default(0);
+            $table->integer('osc_output')->nullable()->default(0);
+            $table->integer('plus_minus')->nullable()->default(0);
+            $table->float('lost_hour', 8, 2)->nullable()->default(0);
 
             $table->float('board_delay', 8, 2)->nullable()->default(0);
             $table->float('part_delay', 8, 2)->nullable()->default(0);
@@ -52,8 +52,8 @@ class AddTableDailyOutput extends Migration
      */
     public function down()
     {
-        Schema::table('daily_outputs', function (Blueprint $table) {
-            //
-        });
+        
+
+        Schema::dropIfExists('daily_outputs');
     }
 }

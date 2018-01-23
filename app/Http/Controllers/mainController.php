@@ -58,10 +58,11 @@ class mainController extends Controller
             $message = 'Data not found';
         }
 
+        //collect adalah helper laravel untuk array
         $additional_message = collect(['_meta'=> [
-                    'message'=>$message,
-                    'count'=> count($do)
-                ] ]);
+            'message'=>$message,
+            'count'=> count($do)
+        ] ]);
         //adding additional message
         $do = $additional_message->merge($do);
         //$do is object, need to changes to array first!
@@ -342,11 +343,11 @@ class mainController extends Controller
     	$Daily_output->shift = $req->input('shift', null);
     	$Daily_output->tanggal = $req->input('tanggal', null);
 
-        if(!$Daily_output->minute){$Daily_output->minute = null; }
-        if(!$Daily_output->target_sop){$Daily_output->target_sop = null; }
-        if(!$Daily_output->osc_output){$Daily_output->osc_output = null; }
-        if(!$Daily_output->plus_minus){$Daily_output->plus_minus = null; }
-        if(!$Daily_output->lost_hour){$Daily_output->lost_hour = null; }
+        if(!$Daily_output->minute){$Daily_output->minute = 60; }
+        if(!$Daily_output->target_sop){$Daily_output->target_sop = 0; }
+        if(!$Daily_output->osc_output){$Daily_output->osc_output = 0; }
+        if(!$Daily_output->plus_minus){$Daily_output->plus_minus = 0; }
+        if(!$Daily_output->lost_hour){$Daily_output->lost_hour = 0; }
         if(!$Daily_output->board_delay){$Daily_output->board_delay = 0; }
         if(!$Daily_output->part_delay){$Daily_output->part_delay = 0; }
         if(!$Daily_output->eqp_trouble){$Daily_output->eqp_trouble = 0; }
