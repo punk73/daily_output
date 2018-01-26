@@ -227,7 +227,7 @@ class mainController extends Controller
             $data[] = $row;
             $i++; //add counter
         }
-        $range = 'A1:S'.(count($data)+1);
+        $range = 'A1:T'.(count($data)+1);
        
         Excel::create('DAILY OUTPUT CONTROL SHEET', function($excel  ) use ($data, $range ){
             // Call writer methods header_remove()
