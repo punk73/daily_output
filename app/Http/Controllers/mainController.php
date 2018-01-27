@@ -68,10 +68,22 @@ class mainController extends Controller
         //$do is object, need to changes to array first!
         $do = $do->toArray();
 
+        //cek kalu $do->data kosong dan parameter2 tsb memenuhi, maka add.
+        if( $req->tanggal != null && $req->shift != null && $req->line_name != null && 
+            empty($do['data']) )
+        {
+            //aunthenticate users id
+            $currentUser = JWTAuth::parseToken()->authenticate();
+
+            $result = $this->input_data($req->tanggal, $req->shift,$req->line_name, $currentUser->id );
+            // return $result;
+            $do['data'] = $result;
+        }
+
         return $do;
     }
 
-    public function download5 (Request $req){
+    public function download_csv (Request $req){
         $do = DB::table('daily_outputs');
 
         $do = $do->get();
@@ -120,6 +132,89 @@ class mainController extends Controller
         }
 
         fclose($fp);    
+    }
+
+    public function input_data($tanggal, $shift, $line_name, $users_id ){
+        // get parameter,        
+        //make variable $time based on shift
+        $shiftA = [
+            ['id'=>1, 'time'=> '06-07', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>2, 'time'=> '07-08', 'durasi'=> 60, 'jumat'=> 50 ],
+            ['id'=>3, 'time'=> '08-09', 'durasi'=> 50, 'jumat'=> 50 ],
+            ['id'=>4, 'time'=> '09-10', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>5, 'time'=> '10-11', 'durasi'=> 50, 'jumat'=> 50 ],
+            ['id'=>6, 'time'=> '11-12', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>7, 'time'=> '12-13', 'durasi'=> 25, 'jumat'=> 10 ],
+            ['id'=>8, 'time'=> '13-14', 'durasi'=> 60, 'jumat'=> 50 ],
+            ['id'=>9, 'time'=> '14-15', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>10, 'time'=> '15-16', 'durasi'=> 5, 'jumat'=> 30 ]
+        ];
+
+        $shiftB = [
+            ['id'=>11, 'time'=> '16-17', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>12, 'time'=> '17-18', 'durasi'=> 60, 'jumat'=> 50],
+            ['id'=>13, 'time'=> '18-19', 'durasi'=> 50, 'jumat'=> 50],
+            ['id'=>14, 'time'=> '19-20', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>15, 'time'=> '20-21', 'durasi'=> 50, 'jumat'=> 50],
+            ['id'=>16, 'time'=> '21-22', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>17, 'time'=> '22-23', 'durasi'=> 25, 'jumat'=> 10],
+            ['id'=>18, 'time'=> '23-24', 'durasi'=> 60, 'jumat'=> 50],
+            ['id'=>19, 'time'=> '00-01', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>20, 'time'=> '01-02', 'durasi'=> 5, 'jumat'=> 30]
+        ];
+
+        if ( $shift == 'A' || $shift == 'a' ){
+            $arrayShift = $shiftA;
+        }else {
+            $arrayShift = $shiftB;
+        }
+
+        //looping based on shift
+        $result = [];
+        foreach ($arrayShift as $key => $value) {
+            # code...
+            //minute ambil dari durasi atau jumat, tergantung dari hari jumat atau bukan.
+            $minute = ( $this->isFriday( $tanggal) ) ? $value['jumat'] : $value['durasi'] ;
+            //store to database.
+            $Daily_output = new Daily_output;
+
+            $Daily_output->time = $value['time'];
+            $Daily_output->minute = $minute;
+            $Daily_output->users_id = $users_id;
+            $Daily_output->tanggal = $tanggal;
+            $Daily_output->shift = $shift;
+            $Daily_output->line_name = $line_name;
+
+            if(!$Daily_output->minute){$Daily_output->minute = 60; } //set default value for minute
+            if(!$Daily_output->target_sop){$Daily_output->target_sop = 0; }
+            if(!$Daily_output->osc_output){$Daily_output->osc_output = 0; }
+            if(!$Daily_output->plus_minus){$Daily_output->plus_minus = 0; }
+            if(!$Daily_output->lost_hour){$Daily_output->lost_hour = 0; }
+            if(!$Daily_output->board_delay){$Daily_output->board_delay = 0; }
+            if(!$Daily_output->part_delay){$Daily_output->part_delay = 0; }
+            if(!$Daily_output->eqp_trouble){$Daily_output->eqp_trouble = 0; }
+            if(!$Daily_output->quality_problem_delay){$Daily_output->quality_problem_delay = 0; }
+            if(!$Daily_output->bal_problem){$Daily_output->bal_problem = 0; }
+            if(!$Daily_output->others){$Daily_output->others = 0; }
+            if(!$Daily_output->support){$Daily_output->support = 0; }
+            if(!$Daily_output->change_model){$Daily_output->change_model = 0; }
+            if(!$Daily_output->users_id){$Daily_output->users_id = null; }
+
+            $Daily_output->save();
+
+            $result[] = $Daily_output;
+        }
+
+        return $result;
+
+
+    }
+
+    public function isFriday($tanggal){
+        $timestamp = strtotime($tanggal); //buat object tanggal php
+        $day = date('w', $timestamp); // convert ke hari ke berapa. sunday = 0, saturday = 6;
+        $result = ($day == 5 ) ? true : false ; // jika $day == jumat atau 5, maka return true;
+        return $result;        
     }
 
     public function download (Request $req)
