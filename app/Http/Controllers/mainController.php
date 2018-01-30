@@ -69,7 +69,7 @@ class mainController extends Controller
         $do = $do->toArray();
 
         //cek kalu $do->data kosong dan parameter2 tsb memenuhi, maka add.
-        if( $req->tanggal != null && $req->shift != null && $req->line_name != null && 
+        if( $req->tanggal != null && $req->shift != null && $req->line_name != null && $req->token != null &&
             empty($do['data']) )
         {
             //aunthenticate users id
