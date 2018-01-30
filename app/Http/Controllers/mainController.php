@@ -44,6 +44,9 @@ class mainController extends Controller
             $do = $do->where('line_name', '=', $req->line_name);
         }
 
+        //order by time.
+        $do = $do->orderBy('time', 'asc');
+
         //pagination
         if ( $req->limit !=null){
             $do = $do->paginate($req->limit);
