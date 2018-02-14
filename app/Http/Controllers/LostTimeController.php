@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use DB;
-use App\Lost_time;
 use Illuminate\Http\Request;
+use JWTAuth;
+use Dingo\Api\Routing\Helpers;
+use App\User;
+use Carbon\Carbon;
+use App\Lost_time;
 
 class LostTimeController extends Controller
 {
@@ -99,9 +103,35 @@ class LostTimeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $req)
     {
-        //
+        $currentUser = JWTAuth::parseToken()->authenticate();
+        //return $currentUser;
+
+        $lost_time = new Lost_time;
+        //inputan
+          $lost_time->line_name = $req->input('line_name', null);
+          $lost_time->shift = $req->input('shift', null);
+          $lost_time->time = $req->input('time', null);
+          $lost_time->problem = $req->input('problem', null);
+          $lost_time->lost_time = $req->input('lost_time', null);
+          $lost_time->cause = $req->input('cause', null);
+          $lost_time->action = $req->input('action', null);
+          $lost_time->tanggal = $req->input('tanggal', null);
+          $lost_time->followed_by = $req->input('followed_by', null);
+          $lost_time->user_id = $req->input('user_id', null);
+        //inputan end
+
+        $lost_time->save();
+
+        return [
+            '_meta'=>[
+                'status'=> "SUCCESS",
+                'userMessage'=> "Data saved",
+                'count'=>count($lost_time)
+            ],
+            'data'=>$lost_time
+        ];
     }
 
     /**
