@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+use App\Lost_time;
 use Illuminate\Http\Request;
 
 class LostTimeController extends Controller
@@ -11,9 +13,74 @@ class LostTimeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
         //
+        $lost_time = DB::table('lost_times');
+
+        //kalau get ada parameter start_date, maka yang muncul adalah between start_date s/d start_date->addWeek()
+
+        // parameter tanggal
+        if( $req->start_date != null ){
+
+            $lost_time = $lost_time->whereBetween('tanggal', [Carbon::createFromFormat('Y-m-d', $req->start_date ), 
+                Carbon::createFromFormat('Y-m-d', $req->start_date )->addWeek() ]  );
+        }
+
+        /*parameter tanggal*/
+        if( $req->tanggal != null ){
+
+            $lost_time = $lost_time->where('tanggal','=', $req->tanggal ) ;
+            // return $req->tanggal;
+        }
+
+        if ($req->shift != null) {
+            # code...
+            $lost_time = $lost_time->where('shift', '=', $req->shift);
+        }
+
+        if ($req->line_name != null) {
+            # code...
+            $lost_time = $lost_time->where('line_name', '=', $req->line_name);
+        }
+
+        //pagination
+        if ( $req->limit !=null){
+            $lost_time = $lost_time->paginate($req->limit);
+        }else{
+            $lost_time = $lost_time->paginate(15);
+        }
+
+        //jika jumlah $lost_time > 0 maka $message = data found, otherwise data not found;
+        if (count($lost_time) > 0) {
+            $message = 'Data found';
+        }else{
+            $message = 'Data not found';
+        }
+
+        //collect adalah helper laravel untuk array
+        $additional_message = collect(['_meta'=> [
+            'message'=>$message,
+            'count'=> count($lost_time)
+        ] ]);
+        //adding additional message
+        $lost_time = $additional_message->merge($lost_time);
+        //$lost_time is object, need to changes to array first!
+        $lost_time = $lost_time->toArray();
+
+        //cek kalu $lost_time->data kosong dan parameter2 tsb memenuhi, maka add.
+        if( $req->tanggal != null && $req->shift != null && $req->line_name != null && 
+            empty($lost_time['data']) )
+        {
+            //aunthenticate users id
+            $currentUser = JWTAuth::parseToken()->authenticate();
+
+            $result = $this->input_data($req->tanggal, $req->shift,$req->line_name, $currentUser->id );
+            // return $result;
+            $lost_time['data'] = $result;
+        }
+
+        return $lost_time;
     }
 
     /**
