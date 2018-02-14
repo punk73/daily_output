@@ -556,7 +556,7 @@ class mainController extends Controller
     	$Daily_output->tanggal = $req->tanggal;
 
         //error handler
-            if(!$Daily_output->minute){$Daily_output->minute = null; }
+            if(!$Daily_output->minute){$Daily_output->minute = 60; }
             if(!$Daily_output->target_sop){$Daily_output->target_sop = 0; }
             if(!$Daily_output->osc_output){$Daily_output->osc_output = 0; }
             if(!$Daily_output->plus_minus){$Daily_output->plus_minus = 0; }
