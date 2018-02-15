@@ -72,7 +72,7 @@ class LostTimeController extends Controller
         //$lost_time is object, need to changes to array first!
         $lost_time = $lost_time->toArray();
 
-        /*//cek kalu $lost_time->data kosong dan parameter2 tsb memenuhi, maka add.
+        //cek kalu $lost_time->data kosong dan parameter2 tsb memenuhi, maka add.
         if( $req->tanggal != null && $req->shift != null && $req->line_name != null && 
             empty($lost_time['data']) )
         {
@@ -82,9 +82,70 @@ class LostTimeController extends Controller
             $result = $this->input_data($req->tanggal, $req->shift,$req->line_name, $currentUser->id );
             // return $result;
             $lost_time['data'] = $result;
-        }*/
+        }
 
         return $lost_time;
+    }
+
+    public function input_data($tanggal, $shift, $line_name, $users_id ){
+        // get parameter,        
+        //make variable $time based on shift
+        $shiftA = [
+            ['id'=>1, 'time'=> '06-07', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>2, 'time'=> '07-08', 'durasi'=> 60, 'jumat'=> 50 ],
+            ['id'=>3, 'time'=> '08-09', 'durasi'=> 50, 'jumat'=> 50 ],
+            ['id'=>4, 'time'=> '09-10', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>5, 'time'=> '10-11', 'durasi'=> 50, 'jumat'=> 50 ],
+            ['id'=>6, 'time'=> '11-12', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>7, 'time'=> '12-13', 'durasi'=> 25, 'jumat'=> 10 ],
+            ['id'=>8, 'time'=> '13-14', 'durasi'=> 60, 'jumat'=> 50 ],
+            ['id'=>9, 'time'=> '14-15', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>10, 'time'=> '15-16', 'durasi'=> 5, 'jumat'=> 30 ]
+        ];
+
+        $shiftB = [
+            ['id'=>11, 'time'=> '16-17', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>12, 'time'=> '17-18', 'durasi'=> 60, 'jumat'=> 50],
+            ['id'=>13, 'time'=> '18-19', 'durasi'=> 50, 'jumat'=> 50],
+            ['id'=>14, 'time'=> '19-20', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>15, 'time'=> '20-21', 'durasi'=> 50, 'jumat'=> 50],
+            ['id'=>16, 'time'=> '21-22', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>17, 'time'=> '22-23', 'durasi'=> 25, 'jumat'=> 10],
+            ['id'=>18, 'time'=> '23-24', 'durasi'=> 60, 'jumat'=> 50],
+            ['id'=>19, 'time'=> '00-01', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>20, 'time'=> '01-02', 'durasi'=> 5, 'jumat'=> 30]
+        ];
+
+        if ( $shift == 'A' || $shift == 'a' ){
+            $arrayShift = $shiftA;
+        }else {
+            $arrayShift = $shiftB;
+        }
+
+        //looping based on shift
+        $result = [];
+        foreach ($arrayShift as $key => $value) {
+            # code...
+            //minute ambil dari durasi atau jumat, tergantung dari hari jumat atau bukan.
+            
+            //store to database.
+            $Lost_time = new Lost_time;
+
+            $Lost_time->time = $value['time'];
+            $Lost_time->users_id = $users_id;
+            $Lost_time->tanggal = $tanggal;
+            $Lost_time->lost_time = 0; //default value
+            $Lost_time->shift = $shift;
+            $Lost_time->line_name = $line_name;
+
+            $Lost_time->save();
+
+            $result[] = $Lost_time;
+        }
+
+        return $result;
+
+
     }
 
     /**
