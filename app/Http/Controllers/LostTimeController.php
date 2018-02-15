@@ -72,7 +72,7 @@ class LostTimeController extends Controller
         //$lost_time is object, need to changes to array first!
         $lost_time = $lost_time->toArray();
 
-        //cek kalu $lost_time->data kosong dan parameter2 tsb memenuhi, maka add.
+        /*//cek kalu $lost_time->data kosong dan parameter2 tsb memenuhi, maka add.
         if( $req->tanggal != null && $req->shift != null && $req->line_name != null && 
             empty($lost_time['data']) )
         {
@@ -82,7 +82,7 @@ class LostTimeController extends Controller
             $result = $this->input_data($req->tanggal, $req->shift,$req->line_name, $currentUser->id );
             // return $result;
             $lost_time['data'] = $result;
-        }
+        }*/
 
         return $lost_time;
     }
