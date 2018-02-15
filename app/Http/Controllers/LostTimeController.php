@@ -119,7 +119,7 @@ class LostTimeController extends Controller
           $lost_time->action = $req->input('action', null);
           $lost_time->tanggal = $req->input('tanggal', null);
           $lost_time->followed_by = $req->input('followed_by', null);
-          $lost_time->user_id = $req->input('user_id', null);
+          $lost_time->users_id = $req->input('users_id', null);
         //inputan end
 
         $lost_time->save();
@@ -135,37 +135,49 @@ class LostTimeController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req, $id)
     {
-        //
+        # code...
+        $currentUser = JWTAuth::parseToken()->authenticate();        
+
+        $lost_time = Lost_time::find($req->id);
+        if ( $lost_time != null ){ 
+            $lost_time->line_name = $req->input('line_name', $lost_time->line_name );
+            $lost_time->shift = $req->input('shift', $lost_time->shift);
+            $lost_time->time = $req->input('time', $lost_time->time);
+            $lost_time->problem = $req->input('problem', $lost_time->problem);
+            $lost_time->lost_time = $req->input('lost_time', $lost_time->lost_time);
+            $lost_time->cause = $req->input('cause', $lost_time->cause);
+            $lost_time->action = $req->input('action', $lost_time->action);
+            $lost_time->tanggal = $req->input('tanggal', $lost_time->tanggal);
+            $lost_time->followed_by = $req->input('followed_by', $lost_time->followed_by);
+            $lost_time->users_id = $req->input('users_id', $lost_time->users_id);
+            // return $lost_time;
+            $lost_time->save();
+            return [ 
+                '_meta'=>[
+                    'status'=> "SUCCESS",
+                    'userMessage'=> "Data updated",
+                    'count'=>count($lost_time)
+                ],
+                 'data'=>$lost_time
+            ];
+        }else{
+            return [ 
+                '_meta'=>[
+                    'status'=> "FAILED",
+                    'userMessage'=> "Data not found",
+                    'count'=>count($lost_time)
+                ],
+                 'data'=>$lost_time
+            ];
+        }
     }
 
     /**
@@ -177,5 +189,29 @@ class LostTimeController extends Controller
     public function destroy($id)
     {
         //
+        $currentUser = JWTAuth::parseToken()->authenticate();
+
+        $lost_time = Lost_time::find($id);
+        if( !empty($lost_time) )
+        {
+            $lost_time->delete();
+            return [ 
+                '_meta'=>[
+                    'status'=> "SUCCESS",
+                    'userMessage'=> "Data deleted",
+                    'count'=>count($lost_time)
+                ]
+            ];
+        }
+        else
+        {
+            return [ 
+                '_meta'=>[
+                    'status'=> "FAILED",
+                    'userMessage'=> "Data not found",
+                    'count'=>count($lost_time)
+                ]
+            ];
+        }
     }
 }

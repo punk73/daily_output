@@ -64,10 +64,9 @@ $api->version('v1', function (Router $api) {
     //route for daily outputs
     Route::prefix('lost_times')->group(function(){
         Route::get('/', 'LostTimeController@index' );
-        Route::get('/download', 'LostTimeController@download' );
         Route::post('/', 'LostTimeController@store' );
-        Route::get('/{id}', 'LostTimeController@show' );
-        Route::delete('/{id}', 'LostTimeController@delete' );
+        // Route::get('/{id}', 'LostTimeController@show' );
+        Route::delete('/{id}', 'LostTimeController@destroy' );
         Route::put('/{id}', 'LostTimeController@update' );
 
     });
