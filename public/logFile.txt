@@ -1,0 +1,22 @@
+* Hostname localhost was found in DNS cache
+*   Trying ::1...
+* Connected to localhost (::1) port 80 (#0)
+> GET http://localhost/fa_quality/public/api/qualities HTTP/1.1
+Host: localhost
+Proxy-Connection: Keep-Alive
+Accept: application/json
+
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 OK
+< Date: Tue, 20 Feb 2018 09:57:25 GMT
+< Server: Apache/2.4.17 (Win32) OpenSSL/1.0.2d PHP/5.6.15
+< X-Powered-By: PHP/5.6.15
+< Cache-Control: private, must-revalidate
+< X-RateLimit-Limit: 60
+< X-RateLimit-Remaining: 50
+< ETag: "7a3dd16799f0ec373ca382897dfae666020c43ab"
+< Content-Length: 3716
+< Connection: close
+< Content-Type: application/json
+< 
+* Closing connection 0

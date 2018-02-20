@@ -171,6 +171,7 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
         Barryvdh\Cors\ServiceProvider::class,
+        Ixudra\Curl\CurlServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -232,7 +233,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-
+        'Curl'  => Ixudra\Curl\Facades\Curl::class,
         /*
          * Package Facades...
          */
