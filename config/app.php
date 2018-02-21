@@ -172,6 +172,7 @@ return [
         Dingo\Api\Provider\LaravelServiceProvider::class,
         Barryvdh\Cors\ServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
+        Firebird\FirebirdServiceProvider::class,
 
         /*
          * Application Service Providers...

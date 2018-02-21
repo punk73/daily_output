@@ -78,4 +78,12 @@ $api->version('v1', function (Router $api) {
         Route::put('/{id}', 'DailyRepairController@update' );
     });
 
+    Route::prefix('qualities')->group(function(){
+        Route::get('/', 'QualityController@data' );
+        Route::get('/dic', 'QualityController@getDIC' );
+        Route::get('/raw', 'QualityController@index' );
+
+        
+    });
+
 });

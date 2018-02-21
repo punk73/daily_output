@@ -12,7 +12,8 @@
         "barryvdh/laravel-cors": "^0.8.2",
         "maatwebsite/excel": "~2.1.0",
         "ixudra/curl": "^6.16",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "jacquestvanzuydam/laravel-firebird": "dev-5.4-support"
 
     },
     "require-dev": {

@@ -7,51 +7,71 @@ use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
+use App\Daily_repair;
+use DB; //database
+
 
 class DailyRepairController extends Controller
-{
+{   
     public function index(Request $request){
-    	//make CURL http://localhost/fa_quality/public/api/qualities
-    	
-    	$url = 'http://localhost/fa_quality/public/api/qualities';
-        $hostname = apache_request_headers();
-        $hostname = $hostname['Host'];
-        
-    	$response = Curl::to($url)
-    	->enableDebug('./logFile.txt')
-        ->withHeader('Accept: application/json')
-    	// ->withProxy('136.198.117.21', 8080)
-        ->withProxy( $hostname , 80)
-        // ->asJson()
-        ->get();        
+        $daily_repair = DB::table('daily_repairs');
 
-        // sleep(1);
-        // return $url;
-        return  $response;
+        //setup parameter
+            if (isset($request->tanggal)) {
+                $tanggal = $request->tanggal;
+            }else{
+                $tanggal = date('Y-m-d');
+            }
+            
+            $daily_repair = $daily_repair->where('tanggal', $tanggal ); //pasti per tanggal hari ini
+        //end setup
+
+        $daily_repair = $daily_repair->get();
         
+
+        if ( $daily_repair->isEmpty() ) {
+            //get data dari controller QualityController
+            $qualityController = app('App\Http\Controllers\QualityController')->data($request); //run Quality Controller data method
+            // return $qualityController;
+            foreach ($qualityController['data'] as $key => $value) {
+                # code...
+                //prepare variable
+                
+
+                //Input $this->Store()
+                $tmp = $this->save($value);
+                return $tmp;
+            }
+        }
+
+        return [
+            'message'=>'OK',
+            'count' => count($daily_repair),
+            'data'=>    $daily_repair
+        ];
     }
 
-    public function index222(Request $request){
-        $client = new \GuzzleHttp\Client([
-            'timeout' => 10.0,
-            'cookie' => true,
-            'proxy' => [
-                'http'=>'http://136.198.117.21:8080',
-                'no' =>'localhost'
-            ]
-        ]);
+    public function save(array $obj){
+        //doing save
+        
+        //error handler
+        if (! is_array($obj) ) {
+            return false;
+        }
 
-        // $url = 'http://localhost/fa_quality/public/api/qualities';
-        $url = 'https://jsonplaceholder.typicode.com/posts';
-        $res = $client->request('GET', $url );
-        echo $res->getStatusCode();
-        // 200
-        echo $res->getHeaderLine('content-type');
-        // 'application/json; charset=utf8'
-        echo $res->getBody();
-        // '{"id": 1420053, "name": "guzzle", ...}'
+        foreach ($obj as $key => $value) {
+            # code... // isi $key = 0 1 2 3 dst
+            $daily_repair = new Daily_repair; //buat object daily repair baru untuk disave
+            foreach ($value as $kunci => $nilai ) {
+                # code...
+                $daily_repair->$kunci = $nilai; //
+            }
+
+
+        }
+        //return obj result
+        return $obj;
     }
-
 
     public function store(Request $request){
     	
