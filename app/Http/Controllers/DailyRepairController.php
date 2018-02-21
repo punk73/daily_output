@@ -32,16 +32,9 @@ class DailyRepairController extends Controller
         if ( $daily_repair->isEmpty() ) {
             //get data dari controller QualityController
             $qualityController = app('App\Http\Controllers\QualityController')->data($request); //run Quality Controller data method
-            // return $qualityController;
-            foreach ($qualityController['data'] as $key => $value) {
-                # code...
-                //prepare variable
-                
-
-                //Input $this->Store()
-                $tmp = $this->save($value);
-                return $tmp;
-            }
+            $data = $qualityController['data'];
+            $this->save($data, $tanggal ); //save data dari qualityController to table daily_repair;
+            $daily_repair = Daily_repair::where('tanggal', $tanggal)->get();
         }
 
         return [
@@ -51,37 +44,105 @@ class DailyRepairController extends Controller
         ];
     }
 
-    public function save(array $obj){
-        //doing save
-        
+    public function save(array $obj, $tanggal){
         //error handler
         if (! is_array($obj) ) {
             return false;
         }
 
+        //doing save        
         foreach ($obj as $key => $value) {
             # code... // isi $key = 0 1 2 3 dst
+            
+            $daily_repair = null; 
             $daily_repair = new Daily_repair; //buat object daily repair baru untuk disave
             foreach ($value as $kunci => $nilai ) {
-                # code...
                 $daily_repair->$kunci = $nilai; //
             }
-
-
+            //set value that is not exist in Quality controller
+            $daily_repair->tanggal = $tanggal;
+            $daily_repair->MA = 0;
+            $daily_repair->PCB = 0;
+            $daily_repair->major_problem = '-';
+            $daily_repair->TOTAL_REPAIR_QTY = $daily_repair->AFTER_REPAIR_QTY;
+            
+            
+            $daily_repair->save();
         }
-        //return obj result
-        return $obj;
+
     }
 
     public function store(Request $request){
     	
+        $params = $request->all();
+        $daily_repair = new Daily_repair;
+
+        foreach ($params as $key => $value) {
+            /*if ( empty( $value ) ) {
+                # code...
+                continue;
+            }*/
+
+            $daily_repair->$key = $value;
+        }
+
+
+        $daily_repair->save();
+
+        return [
+            'message' => 'OK',
+            'count'=> count($daily_repair),
+            'data'=>$daily_repair
+        ];
     }
 
     public function destroy(Request $request){
-    	
+    	$Daily_repair = Daily_repair::find($request->id);
+
+        if( !empty($Daily_repair) )
+        {
+            $Daily_repair->delete();
+            return [ 
+                '_meta'=>[
+                    'status'=> "SUCCESS",
+                    'userMessage'=> "Data deleted",
+                    'count'=>count($Daily_repair)
+                ]
+            ];
+        }
+        else
+        {
+            return [ 
+                '_meta'=>[
+                    'status'=> "FAILED",
+                    'userMessage'=> "Data not found",
+                    'count'=>count($Daily_repair)
+                ]
+            ];
+        }
     }
 
     public function update(Request $request){
-    	
+    	$daily_repair = Daily_repair::find($request->id);
+
+        $params = $request->all();
+        
+        if( !empty($daily_repair) )
+        {
+            foreach ($params as $key => $value) {
+                $daily_repair->$key = $value;
+            }
+            $daily_repair->save();
+            
+        }
+
+        return [ 
+            '_meta'=>[
+                'status'=> "SUCCESS",
+                'userMessage'=> "Data Updated",
+                'count'=>count($daily_repair)
+            ],
+            'data' => $daily_repair
+        ];
     }
 }
