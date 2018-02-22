@@ -27,15 +27,25 @@ class DailyRepairController extends Controller
         //end setup
 
         $daily_repair = $daily_repair->get();
+        $qualityController = app('App\Http\Controllers\QualityController')->data($request); //run Quality Controller data method
+        $data = $qualityController['data'];
         
-
+        //kalau masih kosong, isi.
         if ( $daily_repair->isEmpty() ) {
-            //get data dari controller QualityController
-            $qualityController = app('App\Http\Controllers\QualityController')->data($request); //run Quality Controller data method
-            $data = $qualityController['data'];
-            $this->save($data, $tanggal ); //save data dari qualityController to table daily_repair;
-            $daily_repair = Daily_repair::where('tanggal', $tanggal)->get();
+            
+            //kirim daily output sebagi parameter, nanti di fungsi save, di cek, apakah datanya msh up to date atau tidak.
+            //jika masih, lewat. jika tidak update. jika tidak ada, tambah.
+            $tmp = $this->save($data, $tanggal ); //save data dari qualityController to table daily_repair;
+            //return $tmp;
+        }else{ //untuk cek apakah ada update
+            // return $qualityController;
+            //kalau tidak kosong, alias ada isinya
+            $tmp = $this->cekUpdate($data, $tanggal, $daily_repair->toArray() );
+            // return $tmp;
         }
+
+        $daily_repair = Daily_repair::where('tanggal', $tanggal)->orderBy('line_name')->get();
+
 
         return [
             'message'=>'OK',
@@ -50,14 +60,23 @@ class DailyRepairController extends Controller
             return false;
         }
 
+        //hapus semua dily repair per tanggal $tanggal, lalu isi ulang. *ga bisa deng, nanti kalau aada yang udah diupdate gmn?
         //doing save        
         foreach ($obj as $key => $value) {
             # code... // isi $key = 0 1 2 3 dst
             
             $daily_repair = null; 
+            
+            //return $value;
+            //disini cek apa harus buat baru, atau Daily_repair::find();
+
             $daily_repair = new Daily_repair; //buat object daily repair baru untuk disave
+            
             foreach ($value as $kunci => $nilai ) {
-                $daily_repair->$kunci = $nilai; //
+                // if (isset($value->kunci)) {
+                    # code...
+                    $daily_repair->$kunci = $nilai; //
+                // }
             }
             //set value that is not exist in Quality controller
             $daily_repair->tanggal = $tanggal;
@@ -70,6 +89,69 @@ class DailyRepairController extends Controller
             $daily_repair->save();
         }
 
+    }
+
+    public function cekUpdate(array $obj, $tanggal ,array  $currentData ){
+        
+        //foreach di current data,
+        //compare apa curentData[i]->AFTER_REPAIR_QTY == $obj[i]->AFTER_REPAIR_QTY *AFTER_REPAIR_QTY dipilih karena jumlah dr msg code.
+        //jika tidak, update
+        //jika iya skip.
+
+        //foreach di $obj
+            //compare apa nilai nya sama antara $obj->AFTER_REPAIR_QTY dgn $currentData->AFTER_REPAIR_QTY
+            //jika ya, skip.
+            //jika tidak, update.
+            //jika curentData[i] == undefined (belum terinput di saat input pertama)
+            //input.
+        //
+        foreach ($obj as $key => $value) {
+            // return $value['AFTER_REPAIR_QTY'];
+            // return $currentData[$key]->AFTER_REPAIR_QTY;
+            
+            if ( isset( $currentData[$key] ) ) { //jika current data jumlah nya sama dengan $obj
+                
+                //prepare to edit
+                //compare apa nilai nya sama antara $obj->AFTER_REPAIR_QTY dgn $currentData->AFTER_REPAIR_QTY
+                if ($value['AFTER_REPAIR_QTY'] != $currentData[$key]->AFTER_REPAIR_QTY  ) { //jika after repair qty nya beda
+                    # EDIT
+                    $id  = $currentData[$key]->id;
+                    $daily_repair = Daily_repair::find($id);
+
+                    foreach ($value as $kunci => $nilai) {
+                        # code...
+                        $daily_repair->$kunci = $nilai;
+                    }
+                    $daily_repair->save();
+                }
+
+            }else{ //jika $key tidak ada di $current data
+
+                $daily_repair = new Daily_repair;
+
+                foreach ($value as $kunci => $nilai) {
+                    # code...
+                    $daily_repair->$kunci = $nilai;
+                }
+
+                //set value that is not exist in Quality controller
+                $daily_repair->tanggal = $tanggal;
+                $daily_repair->MA = 0;
+                $daily_repair->PCB = 0;
+                $daily_repair->major_problem = '-';
+                $daily_repair->TOTAL_REPAIR_QTY = $daily_repair->AFTER_REPAIR_QTY;
+                
+
+                $daily_repair->save();
+            }
+        }
+
+        // return 'akhir';
+        /*return [
+            'data' => $obj,
+            'tanggal' =>$tanggal,
+            'currentData' => $currentData
+        ];*/
     }
 
     public function store(Request $request){
