@@ -130,7 +130,10 @@ class DailyRepairController extends Controller
         if( !empty($daily_repair) )
         {
             foreach ($params as $key => $value) {
-                $daily_repair->$key = $value;
+                if (isset($daily_repair->$key )) { //cek agar yg $daily_repair tidak ambil column yg tidak tersedia, contoh _dc dr extjs
+                    # code...
+                    $daily_repair->$key = $value;
+                }
             }
             $daily_repair->save();
             
