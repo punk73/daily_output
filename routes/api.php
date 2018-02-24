@@ -76,14 +76,16 @@ $api->version('v1', function (Router $api) {
         Route::post('/', 'DailyRepairController@store' );
         Route::delete('/{id}', 'DailyRepairController@destroy' );
         Route::put('/{id}', 'DailyRepairController@update' );
+
+        Route::get('/perline', 'DailyRepairController@getPerLine' );
+        
     });
 
     Route::prefix('qualities')->group(function(){
-        Route::get('/', 'QualityController@data' );
+        Route::get('/', 'QualityController@index' );
         Route::get('/dic', 'QualityController@getDIC' );
-        Route::get('/raw', 'QualityController@index' );
+        // Route::get('/raw', 'QualityController@index' );
 
-        
     });
 
 });

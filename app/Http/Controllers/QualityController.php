@@ -4,33 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Quality;
+use DB;
 
 class QualityController extends Controller
 {
-    //
     public function index(Request $request){
-        //$Quality = DB::table('QUALITY')->first();
+        $Quality = Quality::select(DB::raw(
+            "DATE001, 
+            MONTH001,
+            YEAR001,
+            LINE001,
+            SHIFT001,
+            sum( IM_CODE ) as IM_CODE, 
+            sum(PCB_CODE) as PCB_CODE,
+            sum(DESIGN_CODE) as DESIGN_CODE,
+            sum(MECHANISM_CODE) as MECHANISM_CODE,
+            sum(ELECTRICAL_CODE) as ELECTRICAL_CODE, 
+            sum(MECHANICAL_CODE) as MECHANICAL_CODE,
+            sum(FINAL_ASSY_CODE) as FINAL_ASSY_CODE,
+            sum(OTHERS_CODE) as OTHERS_CODE,
+            sum(QTY_REJECT) as QTY_REJECT,
+            sum(QTY_REJECT) as AFTER_REPAIR_QTY"
 
-        // return date('Y');
+        ))->groupBy('LINE001')
+          ->groupBy('SHIFT001')
+          // ->groupBy('DEFECTIVE_CAUSE')
+          // ->groupBy('PLACE_DISPOSAL')
+          // ->groupBy('SYMPTOM')
+          ->groupBy('DATE001')
+          ->groupBy('MONTH001')
+          ->groupBy('YEAR001');
 
-        $Quality = Quality::select('DATE001', 
-            'MONTH001',
-            'YEAR001',
-            'LINE001',
-            'SHIFT001',
-            'IM_CODE', //sum
-            'PCB_CODE', //sum
-            'DESIGN_CODE', //sum
-            'MECHANISM_CODE', //sum
-            'ELECTRICAL_CODE', //sum
-            'MECHANICAL_CODE',//sum
-            'FINAL_ASSY_CODE',//sum
-            'OTHERS_CODE',//sum
-            'DEFECTIVE_CAUSE',
-            'PLACE_DISPOSAL',
-            'SYMPTOM',
-            'QTY_REJECT'
-        );
+
 
         //setup parameter
             if (isset($request->tanggal)) {
@@ -73,82 +78,29 @@ class QualityController extends Controller
                 # code...
                 $Quality = $Quality->where('SHIFT001', $request->shift );
             }
+
+            if (isset($request->line_name)) {
+                # code...
+                $Quality = $Quality->where('LINE001', $request->line_name );
+            }
         //end setup
 
-
-
-        $Quality = $Quality->get();     
-        //init 0 value
-        $SMT = [];
-        $PCB_CODE = [];
-        $DESIGN_CODE = [];
-        $MECHANISM_CODE = [];
-        $ELECTRICAL_CODE = [];
-        $MECHANICAL_CODE = [];
-        $FINAL_ASSY_CODE = [];
-        $OTHERS_CODE = [];
-        $line = [];
-
-        //count
-        foreach ($Quality as $key => $value) {
-            //didalam sini, di klasifikasi, based on line & shift
-            if (!isset( $line[ $value['LINE001'].$value['SHIFT001'] ] )) { //kalau sudah ada sebelumnya
-                
-                $SMT[$value['LINE001'].$value['SHIFT001'] ]  = 0;
-                $PCB_CODE[$value['LINE001'].$value['SHIFT001'] ] = 0;
-                $DESIGN_CODE[$value['LINE001'].$value['SHIFT001'] ] = 0;
-                $MECHANISM_CODE[$value['LINE001'].$value['SHIFT001']] = 0;
-                $ELECTRICAL_CODE[$value['LINE001'].$value['SHIFT001']] = 0;
-                $MECHANICAL_CODE[$value['LINE001'].$value['SHIFT001']] = 0;
-                $FINAL_ASSY_CODE[$value['LINE001'].$value['SHIFT001']] = 0;
-                $OTHERS_CODE[$value['LINE001'].$value['SHIFT001']] = 0;
-            }
-
-            $SMT[$value['LINE001'].$value['SHIFT001']]  = $SMT[$value['LINE001'].$value['SHIFT001']] + $value['IM_CODE'] ;
-            $PCB_CODE[$value['LINE001'].$value['SHIFT001']] = $PCB_CODE[$value['LINE001'].$value['SHIFT001']] + $value['PCB_CODE'] ;
-            $DESIGN_CODE[$value['LINE001'].$value['SHIFT001']] = $DESIGN_CODE[$value['LINE001'].$value['SHIFT001']] + $value['DESIGN_CODE'];
-            $MECHANISM_CODE[$value['LINE001'].$value['SHIFT001']] = $MECHANISM_CODE[$value['LINE001'].$value['SHIFT001']]  + $value['MECHANISM_CODE'];
-            $ELECTRICAL_CODE[$value['LINE001'].$value['SHIFT001']] = $ELECTRICAL_CODE[$value['LINE001'].$value['SHIFT001']] + $value['ELECTRICAL_CODE'] ;
-            $MECHANICAL_CODE[$value['LINE001'].$value['SHIFT001']] = $MECHANICAL_CODE[$value['LINE001'].$value['SHIFT001']] + $value['MECHANICAL_CODE'];
-            $FINAL_ASSY_CODE[$value['LINE001'].$value['SHIFT001']] = $FINAL_ASSY_CODE[$value['LINE001'].$value['SHIFT001']] + $value['FINAL_ASSY_CODE'];
-            $OTHERS_CODE[$value['LINE001'].$value['SHIFT001']] = $OTHERS_CODE[$value['LINE001'].$value['SHIFT001']] + $value['OTHERS_CODE'];
-            
-            // $line[ $value['LINE001']]['AFTER_REPAIR_QTY'] = 
-
-            $line[ $value['LINE001']][$value['SHIFT001']] = [
-                'SMT' => $SMT[$value['LINE001'].$value['SHIFT001']] ,
-                'PCB_CODE' => $PCB_CODE[$value['LINE001'].$value['SHIFT001']],
-                'DESIGN_CODE' => $DESIGN_CODE[$value['LINE001'].$value['SHIFT001']],
-                'MECHANISM_CODE' => $MECHANISM_CODE[$value['LINE001'].$value['SHIFT001']],
-                'ELECTRICAL_CODE' => $ELECTRICAL_CODE[$value['LINE001'].$value['SHIFT001']],
-                'MECHANICAL_CODE' => $MECHANICAL_CODE[$value['LINE001'].$value['SHIFT001']],
-                'FINAL_ASSY_CODE' => $FINAL_ASSY_CODE[$value['LINE001'].$value['SHIFT001']],
-                'OTHERS_CODE' => $OTHERS_CODE[$value['LINE001'].$value['SHIFT001']],
-                'AFTER_REPAIR_QTY' => (
-                    $SMT[$value['LINE001'].$value['SHIFT001']] +
-                    $PCB_CODE[$value['LINE001'].$value['SHIFT001']] +
-                    $DESIGN_CODE[$value['LINE001'].$value['SHIFT001']] +
-                    $MECHANISM_CODE[$value['LINE001'].$value['SHIFT001']] +
-                    $ELECTRICAL_CODE[$value['LINE001'].$value['SHIFT001']] +
-                    $MECHANICAL_CODE[$value['LINE001'].$value['SHIFT001']] +
-                    $FINAL_ASSY_CODE[$value['LINE001'].$value['SHIFT001']] +
-                    $OTHERS_CODE[$value['LINE001'].$value['SHIFT001']]
-                  )
-            ];
-
-        }
+        $Quality = $Quality->orderBy('LINE001')->orderBy('SHIFT001', 'asc')->get();    
+        
+        // return $Quality;
+        // return $key;
 
         return [
             'message' => 'OK',
             'date'=> $request->date . $request->month . $request->year ,
             'count' => count($Quality),
             // 'data' => $Quality,
-            'line' => $line
+            'data' => $Quality
         ];
         //return (array) $Quality;
     }
 
-    public function data(Request $request){
+    public function data(Request $request){ //ini untuk extract data yang belum bener
         $data = $this->index($request);
         //return $data;
         $result =[];
@@ -169,7 +121,7 @@ class QualityController extends Controller
     }
 
     public function getDIC(Request $request){
-        $data = $this->data($request);
+        $data = $this->index($request);
         $SMT = 0;
         $PCB_CODE = 0;
         $DESIGN_CODE = 0;
@@ -178,6 +130,8 @@ class QualityController extends Controller
         $MECHANICAL_CODE = 0;
         $FINAL_ASSY_CODE = 0;
         $OTHERS_CODE = 0;
+
+        // return $data;
 
         foreach ($data['data'] as $key => $value) {
             # code...
