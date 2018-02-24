@@ -30,12 +30,8 @@ class DailyRepairController extends Controller
         $qualityController = app('App\Http\Controllers\QualityController')->index($request); //run Quality Controller data method
         $data = $qualityController['data']->toArray();
         // return $data;
-        // return $data;
         //kalau masih kosong, isi.
         if ( $daily_repair->isEmpty() ) {
-            
-            //kirim daily output sebagi parameter, nanti di fungsi save, di cek, apakah datanya msh up to date atau tidak.
-            //jika masih, lewat. jika tidak update. jika tidak ada, tambah.
             $tmp = $this->save($data, $tanggal ); //save data dari qualityController to table daily_repair;
             // return $tmp;
         }else{ //untuk cek apakah ada update
@@ -43,6 +39,7 @@ class DailyRepairController extends Controller
             //kalau tidak kosong, alias ada isinya
             $tmp = $this->cekUpdate($data, $tanggal, $daily_repair->toArray() );
             // return $tmp;
+            // return 'ada';
         }
         // return 'oaudsf';
         $daily_repair = Daily_repair::where('tanggal', $tanggal)->orderBy('line_name')->orderBy('shift','asc');
@@ -70,7 +67,6 @@ class DailyRepairController extends Controller
         $daily_repair = $daily_repair->toArray();
 
         return $daily_repair;
-
     }
 
     public function getPerLine(Request $request){
@@ -102,10 +98,9 @@ class DailyRepairController extends Controller
             'count' => count($daily_repair), 
             'data'=>   $daily_repair
         ];
-
     }
 
-    public function save(array $obj, $tanggal){
+    public function save(array $obj, $tanggal){ //kalau belum ada, masuk kesini
         //error handler
         if (! is_array($obj) ) {
             return false;
@@ -145,26 +140,15 @@ class DailyRepairController extends Controller
             $daily_repair->tanggal = $tanggal;
             $daily_repair->MA = 0;
             $daily_repair->PCB = 0;
-            $daily_repair->major_problem = '-';
+            //$daily_repair->major_problem = '-'; //karena skrd dari qualities sdh pnya major problem
             $daily_repair->TOTAL_REPAIR_QTY = $daily_repair->AFTER_REPAIR_QTY;
             
             
             $daily_repair->save();
         }
-
-        
-
     }
 
-
-
     public function cekUpdate(array $obj, $tanggal ,array  $currentData ){
-        
-        //foreach di current data,
-        //compare apa curentData[i]->AFTER_REPAIR_QTY == $obj[i]->AFTER_REPAIR_QTY *AFTER_REPAIR_QTY dipilih karena jumlah dr msg code.
-        //jika tidak, update
-        //jika iya skip.
-
         //foreach di $obj
             //compare apa nilai nya sama antara $obj->AFTER_REPAIR_QTY dgn $currentData->AFTER_REPAIR_QTY
             //jika ya, skip.
@@ -191,10 +175,12 @@ class DailyRepairController extends Controller
                         # code...
                         if (isset($daily_repair->$kunci)) {
                             # code...
+                            // return $kunci;
                             $daily_repair->$kunci = $nilai;
                         }
                     }
                     $daily_repair->save();
+                    // return $daily_repair;
                 }
 
             }else{ //jika $key tidak ada di $current data
@@ -208,14 +194,13 @@ class DailyRepairController extends Controller
                         $daily_repair->$kunci = $nilai;
                     }
                 }
-
+                // return $value;
                 //set value that is not exist in Quality controller
                 $daily_repair->tanggal = $tanggal;
                 $daily_repair->MA = 0;
                 $daily_repair->PCB = 0;
-                $daily_repair->major_problem = '-';
+                $daily_repair->major_problem = $value['major_problem'];
                 $daily_repair->TOTAL_REPAIR_QTY = $daily_repair->AFTER_REPAIR_QTY;
-                
 
                 $daily_repair->save();
             }

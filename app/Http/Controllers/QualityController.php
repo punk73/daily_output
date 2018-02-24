@@ -25,7 +25,6 @@ class QualityController extends Controller
             sum(OTHERS_CODE) as OTHERS_CODE,
             sum(QTY_REJECT) as QTY_REJECT,
             sum(QTY_REJECT) as AFTER_REPAIR_QTY"
-
         ))->groupBy('LINE001')
           ->groupBy('SHIFT001')
           // ->groupBy('DEFECTIVE_CAUSE')
@@ -88,6 +87,64 @@ class QualityController extends Controller
         $Quality = $Quality->orderBy('LINE001')->orderBy('SHIFT001', 'asc')->get();    
         
         // return $Quality;
+        //isi based 
+        foreach ($Quality as $key => $value) {
+            # code...
+            //ambil yg punya value paling gede.
+            $IM_CODE = $value['IM_CODE'];
+            $PCB_CODE = $value['PCB_CODE'];
+            $DESIGN_CODE = $value['DESIGN_CODE'];
+            $MECHANISM_CODE = $value['MECHANISM_CODE'];
+            $ELECTRICAL_CODE = $value['ELECTRICAL_CODE'];
+            $MECHANICAL_CODE = $value['MECHANICAL_CODE'];
+            $FINAL_ASSY_CODE = $value['FINAL_ASSY_CODE'];
+            $OTHERS_CODE = $value['OTHERS_CODE'];
+            $QTY_REJECT = $value['QTY_REJECT'];
+
+            $tmp = [
+                "IM_CODE" =>    (int) $IM_CODE,
+                "PCB_CODE" =>    (int) $PCB_CODE,
+                "DESIGN_CODE" =>    (int) $DESIGN_CODE,
+                "MECHANISM_CODE" =>    (int) $MECHANISM_CODE,
+                "ELECTRICAL_CODE" =>   (int) $ELECTRICAL_CODE,
+                "MECHANICAL_CODE" =>    (int) $MECHANICAL_CODE,
+                "FINAL_ASSY_CODE" =>    (int) $FINAL_ASSY_CODE,
+                "OTHERS_CODE" =>    (int) $OTHERS_CODE,
+                // "QTY_REJECT" =>   (int) $QTY_REJECT,
+            ];
+
+            //kalau semua nya 0, gausah.
+            if (max($tmp) != 0) {
+                //ambil kategori masalah yg paling sering muncul
+                $highest = array_keys($tmp, max($tmp)); //ini berbentuk array nama colum (["IM_CODE"])
+                //return [$highest, max($tmp) ];
+                //get problem dari problem category
+                $msg = "";    
+                foreach ($highest as $i => $val) {
+                    //get symptom, place disposle, and defective cause
+                    $problems = Quality::select('DEFECTIVE_CAUSE','PLACE_DISPOSAL','SYMPTOM')
+                    ->where('DATE001', $request->date )
+                    ->where('MONTH001', $request->month )
+                    ->where('YEAR001', $request->year )
+                    ->where($val, 1) //where column yg paling banyak, value nya 1 (misal IM_CODE)
+                    ->where('LINE001', $value['LINE001'] )
+                    ->get();
+
+                    //return [$problems, $request->date.$request->month.$request->year];
+                    foreach ($problems as $key => $problem) {
+                        # code...
+                        $defec = str_replace(" ", "", $problem['DEFECTIVE_CAUSE'] );
+                        $msg = $defec.", ".$msg ;
+                    }
+                }
+
+                $value['major_problem'] = $msg;
+                // return $value;   
+                
+            }
+            //get symptom, place disposal, sama defective cause nya.
+            //tempel di quality as major problem.
+        }
         // return $key;
 
         return [
