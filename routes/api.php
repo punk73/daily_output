@@ -68,7 +68,22 @@ $api->version('v1', function (Router $api) {
         // Route::get('/{id}', 'LostTimeController@show' );
         Route::delete('/{id}', 'LostTimeController@destroy' );
         Route::put('/{id}', 'LostTimeController@update' );
+    });
 
+    //routes for daily repairs
+    Route::prefix('daily_repairs')->group(function(){
+        Route::get('/', 'DailyRepairController@index' );
+        Route::post('/', 'DailyRepairController@store' );
+        Route::delete('/{id}', 'DailyRepairController@destroy' );
+        Route::put('/{id}', 'DailyRepairController@update' );
+    });
+
+    Route::prefix('qualities')->group(function(){
+        Route::get('/', 'QualityController@data' );
+        Route::get('/dic', 'QualityController@getDIC' );
+        Route::get('/raw', 'QualityController@index' );
+
+        
     });
 
 });

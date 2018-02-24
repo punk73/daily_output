@@ -79,6 +79,15 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'firebird' => [
+            'driver'   => 'firebird',
+            'host'     => env('DB_HOST2', 'localhost'),
+            'database' => env('DB_DATABASE2','/storage/firebird/APPLICATION.FDB'),
+            'username' => env('DB_USERNAME2', 'SYSDBA'),
+            'password' => env('DB_PASSWORD2', 'masterkey'),
+            'charset'  => env('DB_CHARSET2', 'UTF8'),
+        ],
+
     ],
 
     /*

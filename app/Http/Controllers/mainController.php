@@ -206,8 +206,6 @@ class mainController extends Controller
         }
 
         return $result;
-
-
     }
 
     public function isFriday($tanggal){
@@ -381,7 +379,6 @@ class mainController extends Controller
             });
 
         })->download('xls');
-
     }
     
     public function show(Request $req){
@@ -492,7 +489,6 @@ class mainController extends Controller
 	    		]
 	    	];
         }
-
     }
 
     public function update(Request $req)
