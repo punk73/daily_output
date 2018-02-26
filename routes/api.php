@@ -73,11 +73,15 @@ $api->version('v1', function (Router $api) {
     //routes for daily repairs
     Route::prefix('daily_repairs')->group(function(){
         Route::get('/', 'DailyRepairController@index' );
+        Route::get('/{id}', 'DailyRepairController@show' );
+        
         Route::post('/', 'DailyRepairController@store' );
         Route::delete('/{id}', 'DailyRepairController@destroy' );
         Route::put('/{id}', 'DailyRepairController@update' );
 
         Route::get('/perline', 'DailyRepairController@getPerLine' );
+        Route::get('/permonth', 'DailyRepairController@getPerMonth' );
+
         
     });
 

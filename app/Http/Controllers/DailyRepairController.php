@@ -43,6 +43,12 @@ class DailyRepairController extends Controller
         }
         // return 'oaudsf';
         $daily_repair = Daily_repair::where('tanggal', $tanggal)->orderBy('line_name')->orderBy('shift','asc');
+
+        if ( isset($request->line_name) && $request->line_name != "" ) { //di set dan tidak empty string
+            # code...
+            $daily_repair = $daily_repair->where('line_name', $request->line_name ) ;
+        }
+
         //pagination
         if ( $request->limit !=null){
             $daily_repair = $daily_repair->paginate($request->limit);
@@ -159,26 +165,33 @@ class DailyRepairController extends Controller
         foreach ($obj as $key => $value) {
             // return $value['AFTER_REPAIR_QTY'];
             // return $currentData[$key]->AFTER_REPAIR_QTY;
-            
+            $value['shift'] = str_replace(" ", "", $value["SHIFT001"] );
+            $value['line_name'] = str_replace(" ", "", $value["LINE001"] );
+            $value['SMT'] = str_replace(" ", "", $value["IM_CODE"] );
+            //prepare to edit
+            unset($value["DATE001"]);
+            unset($value["MONTH001"]);
+            unset($value["YEAR001"]);
+            unset($value["LINE001"]);
+            unset($value["SHIFT001"]);
+            unset($value["QTY_REJECT"]);
+            unset($value["IM_CODE"]);
+
             if ( isset( $currentData[$key] ) ) { //jika current data jumlah nya sama dengan $obj
-                
-                //prepare to edit
+                // return $value;
                 //compare apa nilai nya sama antara $obj->AFTER_REPAIR_QTY dgn $currentData->AFTER_REPAIR_QTY
                 if ($value['AFTER_REPAIR_QTY'] != $currentData[$key]->AFTER_REPAIR_QTY  ) { //jika after repair qty nya beda
                     # EDIT
 
                     $id  = $currentData[$key]->id;
                     $daily_repair = Daily_repair::find($id);
-                    // return [$value, $currentData ];
                     // return $daily_repair;
+                    
                     foreach ($value as $kunci => $nilai) {
-                        # code...
-                        if (isset($daily_repair->$kunci)) {
-                            # code...
-                            // return $kunci;
-                            $daily_repair->$kunci = $nilai;
-                        }
+                        $daily_repair->$kunci = $nilai;
                     }
+
+                    // return $daily_repair;
                     $daily_repair->save();
                     // return $daily_repair;
                 }
@@ -188,11 +201,8 @@ class DailyRepairController extends Controller
                 $daily_repair = new Daily_repair;
 
                 foreach ($value as $kunci => $nilai) {
-                    # code...
-                    if (isset($daily_repair->kunci)) {
-                        # code...
-                        $daily_repair->$kunci = $nilai;
-                    }
+
+                    $daily_repair->$kunci = $nilai;
                 }
                 // return $value;
                 //set value that is not exist in Quality controller
@@ -200,7 +210,7 @@ class DailyRepairController extends Controller
                 $daily_repair->MA = 0;
                 $daily_repair->PCB = 0;
                 $daily_repair->major_problem = $value['major_problem'];
-                $daily_repair->TOTAL_REPAIR_QTY = $daily_repair->AFTER_REPAIR_QTY;
+                $daily_repair->TOTAL_REPAIR_QTY = $value['AFTER_REPAIR_QTY'];
 
                 $daily_repair->save();
             }
@@ -264,30 +274,94 @@ class DailyRepairController extends Controller
         }
     }
 
+    public function show($id){
+        $daily_repair = Daily_repair::find($id);
+
+        if ( !$daily_repair ) {
+            $message = 'Data not found';
+        }else{
+            $message = 'Data Found';
+        }
+
+        return [
+            'message' => $message,
+            'count' => count($daily_repair),
+            'data' => $daily_repair
+        ];
+    }
+
     public function update(Request $request){
     	$daily_repair = Daily_repair::find($request->id);
 
         $params = $request->all();
+
+        // return $params;
         
         if( !empty($daily_repair) )
         {
             foreach ($params as $key => $value) {
-                if (isset($daily_repair->$key )) { //cek agar yg $daily_repair tidak ambil column yg tidak tersedia, contoh _dc dr extjs
-                    # code...
+                if (property_exists(Daily_repair::class, $key) ) { //cek agar yg $daily_repair tidak ambil column yg tidak tersedia, contoh _dc dr extjs
                     $daily_repair->$key = $value;
                 }
             }
             $daily_repair->save();
-            
+
+            $status = 'SUCCESS';
+            $message = 'Data Updated';
+        }else{
+            $status = 'FAILED';
+            $message = 'Data not Updated';
         }
 
         return [ 
             '_meta'=>[
-                'status'=> "SUCCESS",
-                'userMessage'=> "Data Updated",
+                'status'=> $status,
+                'userMessage'=> $message,
                 'count'=>count($daily_repair)
             ],
             'data' => $daily_repair
         ];
+    }
+
+    public function getPerMonth(Request $request){
+        $daily_repair = Daily_repair::select(DB::raw(
+            "sum(AFTER_REPAIR_QTY) as AFTER_REPAIR_QTY,
+             sum(TOTAL_REPAIR_QTY) as TOTAL_REPAIR_QTY,
+             tanggal
+              "));
+
+        if (isset($requset->month) && $requset->month != "" ) {
+            $month = $request->month;
+        }else{
+            $month = date('m');
+        }
+
+        // $arrayLineName = [19]; //[18,19,20,21,22,23,24,25];
+
+        $daily_repair = $daily_repair->whereMonth('tanggal', '=', $month );
+
+        // $daily_repair = $daily_repair->whereIn('line_name', $arrayLineName);
+        $daily_repair = $daily_repair->orderBy('tanggal')
+        ->groupBy('tanggal')
+        ->get();
+
+        foreach ($daily_repair as $key => $value) {
+            $value['AFTER_REPAIR_QTY'] = (int) $value['AFTER_REPAIR_QTY'];
+            $value['TOTAL_REPAIR_QTY'] = (int) $value['TOTAL_REPAIR_QTY'];
+            $value['name'] = $value['tanggal']. "tt" ;
+            
+        }
+
+
+        return [
+            'status' => 'OK',
+            'month' => $month,
+            'count' => count($daily_repair),
+            'data'=>    $daily_repair
+        ];
+    }
+
+    public function isExist($item){
+        return property_exists(Daily_repair::class, $item);
     }
 }
