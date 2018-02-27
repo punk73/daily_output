@@ -141,6 +141,8 @@ class QualityController extends Controller
                 $value['major_problem'] = $msg;
                 // return $value;   
                 
+            }else{
+                $value['major_problem'] = '-';
             }
             //get symptom, place disposal, sama defective cause nya.
             //tempel di quality as major problem.

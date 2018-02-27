@@ -24,6 +24,10 @@ class DailyRepairController extends Controller
             }
             
             $daily_repair = $daily_repair->where('tanggal', $tanggal ); //pasti per tanggal hari ini
+
+            if ( isset($request->line_name) && $request->line_name != "" ) { //di set dan tidak empty string
+                $daily_repair = $daily_repair->where('line_name', $request->line_name ) ;
+            }
         //end setup
 
         $daily_repair = $daily_repair->get();
@@ -37,7 +41,9 @@ class DailyRepairController extends Controller
         }else{ //untuk cek apakah ada update
             // return $qualityController;
             //kalau tidak kosong, alias ada isinya
+
             $tmp = $this->cekUpdate($data, $tanggal, $daily_repair->toArray() );
+            
             // return $tmp;
             // return 'ada';
         }
@@ -168,6 +174,7 @@ class DailyRepairController extends Controller
             $value['shift'] = str_replace(" ", "", $value["SHIFT001"] );
             $value['line_name'] = str_replace(" ", "", $value["LINE001"] );
             $value['SMT'] = str_replace(" ", "", $value["IM_CODE"] );
+            // $value['tanggal'] = $value["YEAR001"] . $value["MONTH001"] . $value["DATE001"]; 
             //prepare to edit
             unset($value["DATE001"]);
             unset($value["MONTH001"]);
@@ -187,9 +194,26 @@ class DailyRepairController extends Controller
                     $daily_repair = Daily_repair::find($id);
                     // return $daily_repair;
                     
-                    foreach ($value as $kunci => $nilai) {
+                    /*foreach ($value as $kunci => $nilai) {
                         $daily_repair->$kunci = $nilai;
-                    }
+                    }*/
+                    $daily_repair->line_name = $value['line_name'];
+                    $daily_repair->shift = $value['shift'];
+                    // $daily_repair->tanggal = $value['tanggal'];
+                    $daily_repair->SMT = $value['SMT'];
+                    $daily_repair->PCB_CODE = $value['PCB_CODE'];
+                    $daily_repair->DESIGN_CODE = $value['DESIGN_CODE'];
+                    $daily_repair->MECHANISM_CODE = $value['MECHANISM_CODE'];
+                    $daily_repair->ELECTRICAL_CODE = $value['ELECTRICAL_CODE'];
+                    $daily_repair->MECHANICAL_CODE = $value['MECHANICAL_CODE'];
+                    $daily_repair->FINAL_ASSY_CODE = $value['FINAL_ASSY_CODE'];
+                    $daily_repair->OTHERS_CODE = $value['OTHERS_CODE'];
+                    $daily_repair->AFTER_REPAIR_QTY = $value['AFTER_REPAIR_QTY'];
+                    $daily_repair->MA = $currentData[$key]->MA;
+                    $daily_repair->PCB = $currentData[$key]->PCB;
+                    $daily_repair->TOTAL_REPAIR_QTY = ( $value['AFTER_REPAIR_QTY'] + $currentData[$key]->MA +  
+                        $currentData[$key]->PCB ) ;
+                    $daily_repair->major_problem = $currentData[$key]->major_problem;
 
                     // return $daily_repair;
                     $daily_repair->save();
@@ -198,6 +222,7 @@ class DailyRepairController extends Controller
 
             }else{ //jika $key tidak ada di $current data
 
+                // return $value;
                 $daily_repair = new Daily_repair;
 
                 foreach ($value as $kunci => $nilai) {
@@ -241,6 +266,7 @@ class DailyRepairController extends Controller
         $daily_repair->MECHANICAL_CODE = $request->MECHANICAL_CODE;
         $daily_repair->FINAL_ASSY_CODE = $request->FINAL_ASSY_CODE;
         $daily_repair->OTHERS_CODE = $request->OTHERS_CODE;
+        $daily_repair->AFTER_REPAIR_QTY = $request->AFTER_REPAIR_QTY;        
         $daily_repair->MA = $request->MA;
         $daily_repair->PCB = $request->PCB;
         $daily_repair->TOTAL_REPAIR_QTY = $request->TOTAL_REPAIR_QTY;
@@ -319,6 +345,7 @@ class DailyRepairController extends Controller
             $daily_repair->MECHANICAL_CODE = $request->MECHANICAL_CODE;
             $daily_repair->FINAL_ASSY_CODE = $request->FINAL_ASSY_CODE;
             $daily_repair->OTHERS_CODE = $request->OTHERS_CODE;
+            $daily_repair->AFTER_REPAIR_QTY = $request->AFTER_REPAIR_QTY;   
             $daily_repair->MA = $request->MA;
             $daily_repair->PCB = $request->PCB;
             $daily_repair->TOTAL_REPAIR_QTY = $request->TOTAL_REPAIR_QTY;
@@ -353,15 +380,23 @@ class DailyRepairController extends Controller
              tanggal
               "));
 
-        if (isset($requset->month) && $requset->month != "" ) {
+
+        if (isset($request->month) ) {
             $month = $request->month;
         }else{
             $month = date('m');
         }
 
+        if (isset($request->year) && $request->year != "" ) {
+            $year = $request->year;
+        }else{
+            $year = date('Y');
+        }
+
         // $arrayLineName = [19]; //[18,19,20,21,22,23,24,25];
 
         $daily_repair = $daily_repair->whereMonth('tanggal', '=', $month );
+        $daily_repair = $daily_repair->whereYear('tanggal', '=', $year );
 
         // $daily_repair = $daily_repair->whereIn('line_name', $arrayLineName);
         $daily_repair = $daily_repair->orderBy('tanggal')
@@ -380,6 +415,7 @@ class DailyRepairController extends Controller
         return [
             'status' => 'OK',
             'month' => $month,
+            'year' => $year,
             'count' => count($daily_repair),
             'data'=>    $daily_repair
         ];
