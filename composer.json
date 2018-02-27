@@ -10,7 +10,10 @@
         "tymon/jwt-auth": "^0.5.9",
         "dingo/api": "1.0.x@dev",
         "barryvdh/laravel-cors": "^0.8.2",
-        "maatwebsite/excel": "~2.1.0"
+        "maatwebsite/excel": "~2.1.0",
+        "ixudra/curl": "^6.16",
+        "guzzlehttp/guzzle": "^6.3",
+        "jacquestvanzuydam/laravel-firebird": "dev-5.4-support"
 
     },
     "require-dev": {

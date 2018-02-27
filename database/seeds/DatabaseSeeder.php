@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(Daily_output_control_seeder::class);
+        // $this->call(Daily_output_control_seeder::class);
+        $this->call(Lost_time_control_seeder::class);
+
     }
 }

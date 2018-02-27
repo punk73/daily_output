@@ -61,4 +61,36 @@ $api->version('v1', function (Router $api) {
 
     });
 
+    //route for daily outputs
+    Route::prefix('lost_times')->group(function(){
+        Route::get('/', 'LostTimeController@index' );
+        Route::post('/', 'LostTimeController@store' );
+        // Route::get('/{id}', 'LostTimeController@show' );
+        Route::delete('/{id}', 'LostTimeController@destroy' );
+        Route::put('/{id}', 'LostTimeController@update' );
+    });
+
+    //routes for daily repairs
+    Route::prefix('daily_repairs')->group(function(){
+        Route::get('/', 'DailyRepairController@index' );
+        
+        Route::post('/', 'DailyRepairController@store' );
+        Route::delete('/{id}', 'DailyRepairController@destroy' );
+        Route::put('/{id}', 'DailyRepairController@update' );
+
+        Route::get('/perline', 'DailyRepairController@getPerLine' );
+        Route::get('/permonth', 'DailyRepairController@getPerMonth' );
+        Route::get('/{id}', 'DailyRepairController@show' ); //it should be the last. since we need to get per month and per line
+
+
+        
+    });
+
+    Route::prefix('qualities')->group(function(){
+        Route::get('/', 'QualityController@index' );
+        Route::get('/dic', 'QualityController@getDIC' );
+        // Route::get('/raw', 'QualityController@index' );
+
+    });
+
 });
