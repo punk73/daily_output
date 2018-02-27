@@ -73,7 +73,6 @@ $api->version('v1', function (Router $api) {
     //routes for daily repairs
     Route::prefix('daily_repairs')->group(function(){
         Route::get('/', 'DailyRepairController@index' );
-        Route::get('/{id}', 'DailyRepairController@show' );
         
         Route::post('/', 'DailyRepairController@store' );
         Route::delete('/{id}', 'DailyRepairController@destroy' );
@@ -81,6 +80,8 @@ $api->version('v1', function (Router $api) {
 
         Route::get('/perline', 'DailyRepairController@getPerLine' );
         Route::get('/permonth', 'DailyRepairController@getPerMonth' );
+        Route::get('/{id}', 'DailyRepairController@show' ); //it should be the last. since we need to get per month and per line
+
 
         
     });

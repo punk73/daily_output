@@ -229,14 +229,22 @@ class DailyRepairController extends Controller
         $params = $request->all();
         $daily_repair = new Daily_repair;
 
-        foreach ($params as $key => $value) {
-            /*if ( empty( $value ) ) {
-                # code...
-                continue;
-            }*/
-
-            $daily_repair->$key = $value;
-        }
+        $daily_repair->line_name = $request->line_name;
+        $daily_repair->shift = $request->shift;
+        $daily_repair->users_id = $request->users_id;
+        $daily_repair->tanggal = $request->tanggal;
+        $daily_repair->SMT = $request->SMT;
+        $daily_repair->PCB_CODE = $request->PCB_CODE;
+        $daily_repair->DESIGN_CODE = $request->DESIGN_CODE;
+        $daily_repair->MECHANISM_CODE = $request->MECHANISM_CODE;
+        $daily_repair->ELECTRICAL_CODE = $request->ELECTRICAL_CODE;
+        $daily_repair->MECHANICAL_CODE = $request->MECHANICAL_CODE;
+        $daily_repair->FINAL_ASSY_CODE = $request->FINAL_ASSY_CODE;
+        $daily_repair->OTHERS_CODE = $request->OTHERS_CODE;
+        $daily_repair->MA = $request->MA;
+        $daily_repair->PCB = $request->PCB;
+        $daily_repair->TOTAL_REPAIR_QTY = $request->TOTAL_REPAIR_QTY;
+        $daily_repair->major_problem = $request->major_problem;
 
 
         $daily_repair->save();
@@ -292,18 +300,31 @@ class DailyRepairController extends Controller
 
     public function update(Request $request){
     	$daily_repair = Daily_repair::find($request->id);
-
-        $params = $request->all();
+        // $daily_repair = $daily_repair->toArray();
+        // $params = $request->all();
 
         // return $params;
         
         if( !empty($daily_repair) )
-        {
-            foreach ($params as $key => $value) {
-                if (property_exists(Daily_repair::class, $key) ) { //cek agar yg $daily_repair tidak ambil column yg tidak tersedia, contoh _dc dr extjs
-                    $daily_repair->$key = $value;
-                }
-            }
+        {   
+            $daily_repair->line_name = $request->line_name;
+            $daily_repair->shift = $request->shift;
+            $daily_repair->users_id = $request->users_id;
+            $daily_repair->tanggal = $request->tanggal;
+            $daily_repair->SMT = $request->SMT;
+            $daily_repair->PCB_CODE = $request->PCB_CODE;
+            $daily_repair->DESIGN_CODE = $request->DESIGN_CODE;
+            $daily_repair->MECHANISM_CODE = $request->MECHANISM_CODE;
+            $daily_repair->ELECTRICAL_CODE = $request->ELECTRICAL_CODE;
+            $daily_repair->MECHANICAL_CODE = $request->MECHANICAL_CODE;
+            $daily_repair->FINAL_ASSY_CODE = $request->FINAL_ASSY_CODE;
+            $daily_repair->OTHERS_CODE = $request->OTHERS_CODE;
+            $daily_repair->MA = $request->MA;
+            $daily_repair->PCB = $request->PCB;
+            $daily_repair->TOTAL_REPAIR_QTY = $request->TOTAL_REPAIR_QTY;
+            $daily_repair->major_problem = $request->major_problem;
+            
+            
             $daily_repair->save();
 
             $status = 'SUCCESS';
@@ -324,6 +345,8 @@ class DailyRepairController extends Controller
     }
 
     public function getPerMonth(Request $request){
+
+
         $daily_repair = Daily_repair::select(DB::raw(
             "sum(AFTER_REPAIR_QTY) as AFTER_REPAIR_QTY,
              sum(TOTAL_REPAIR_QTY) as TOTAL_REPAIR_QTY,
@@ -353,6 +376,7 @@ class DailyRepairController extends Controller
         }
 
 
+
         return [
             'status' => 'OK',
             'month' => $month,
@@ -361,7 +385,7 @@ class DailyRepairController extends Controller
         ];
     }
 
-    public function isExist($item){
-        return property_exists(Daily_repair::class, $item);
-    }
+   
+
+    
 }
