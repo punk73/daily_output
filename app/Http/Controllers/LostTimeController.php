@@ -144,8 +144,6 @@ class LostTimeController extends Controller
         }
 
         return $result;
-
-
     }
 
     /**
@@ -274,5 +272,66 @@ class LostTimeController extends Controller
                 ]
             ];
         }
+    }
+
+    public function getPerLine(Request $request){
+        $lost_time = Lost_time::select(DB::raw("line_name,
+            sum(lost_time) as lost_time,
+            tanggal
+            "))->groupBy('line_name')
+            ->groupBy('tanggal');
+
+        if (isset($request->tanggal) && $request->tanggal != "" ) {
+            $tanggal = $request->tanggal;
+        }else{
+            $tanggal = date('Y-m-d');
+        }
+
+        $lost_time = $lost_time->where('tanggal', $tanggal);
+        $lost_time = $lost_time->get();
+        
+        return [
+            'message' => 'OK',
+            'tanggal' => $tanggal,
+            'count' => count($lost_time),
+            'data' => $lost_time
+        ];
+    }
+
+    public function getPerMonth(Request $request){
+        $lost_time = Lost_time::select(DB::raw("
+            sum(lost_time) as lost_time,
+            (sum(lost_time) / 60) as lost_time_hour,
+            tanggal
+        "));
+
+        if (isset($request->month) ) {
+            $month = $request->month;
+        }else{
+            $month = date('m');
+        }
+
+        if (isset($request->year) && $request->year != "" ) {
+            $year = $request->year;
+        }else{
+            $year = date('Y');
+        }
+
+        // $arrayLineName = [19]; //[18,19,20,21,22,23,24,25];
+
+        $lost_time = $lost_time->whereMonth('tanggal', '=', $month );
+        $lost_time = $lost_time->whereYear('tanggal', '=', $year );
+
+        // $daily_repair = $daily_repair->whereIn('line_name', $arrayLineName);
+        $lost_time = $lost_time->orderBy('tanggal')
+        ->groupBy('tanggal')
+        ->get();
+
+        return [
+            'message' => 'OK',
+            'month' => $month,
+            'year' =>$year, 
+            'data'=>    $lost_time
+        ];
     }
 }

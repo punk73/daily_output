@@ -68,6 +68,10 @@ $api->version('v1', function (Router $api) {
         // Route::get('/{id}', 'LostTimeController@show' );
         Route::delete('/{id}', 'LostTimeController@destroy' );
         Route::put('/{id}', 'LostTimeController@update' );
+        Route::get('/perline', 'LostTimeController@getPerLine' );
+        Route::get('/permonth', 'LostTimeController@getPerMonth' );
+
+
     });
 
     //routes for daily repairs

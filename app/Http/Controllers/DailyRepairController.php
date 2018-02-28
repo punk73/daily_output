@@ -406,7 +406,7 @@ class DailyRepairController extends Controller
         foreach ($daily_repair as $key => $value) {
             $value['AFTER_REPAIR_QTY'] = (int) $value['AFTER_REPAIR_QTY'];
             $value['TOTAL_REPAIR_QTY'] = (int) $value['TOTAL_REPAIR_QTY'];
-            $value['name'] = $value['tanggal']. "tt" ;
+            //$value['name'] = $value['tanggal']. "tt" ;
             
         }
 
