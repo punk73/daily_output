@@ -95,14 +95,20 @@ class DailyRepairController extends Controller
         //end setup
 
         $daily_repair = $daily_repair
-                        ->select(DB::raw('CAST(sum(AFTER_REPAIR_QTY) as INT ) as AFTER_REPAIR_QTY,
-                         CAST(sum(TOTAL_REPAIR_QTY) as INT ) as TOTAL_REPAIR_QTY ,
+                        ->select(DB::raw('sum(AFTER_REPAIR_QTY) as AFTER_REPAIR_QTY,
+                         sum(TOTAL_REPAIR_QTY) as TOTAL_REPAIR_QTY ,
                          tanggal,
                          line_name '))
                         ->where('tanggal', $tanggal )
                         ->groupBy('line_name')
                         ->groupBy('tanggal')
                         ->get();
+        
+
+        foreach ($daily_repair as $key => $value) {
+            $value->AFTER_REPAIR_QTY = (int) $value->AFTER_REPAIR_QTY;
+            $value->TOTAL_REPAIR_QTY = (int) $value->TOTAL_REPAIR_QTY;
+        }
 
         return 
         [
