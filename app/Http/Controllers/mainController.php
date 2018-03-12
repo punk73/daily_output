@@ -83,6 +83,27 @@ class mainController extends Controller
             $do['data'] = $result;
         }
 
+        /*if ($req->shift == 'B') {
+            $tmpData = [];
+            foreach ($do['data'] as $key => $value) {
+
+                if ($value->time == '00-01') {
+                    $tmp = $value;
+                    unset($do['data'][$key] );
+                    array_push($do['data'], $tmp);
+                }
+
+                if ($value->time == '01-02') {
+                    $tmp = $value;
+                    unset($do['data'][$key] );
+                    array_push($do['data'], $tmp);
+                }
+
+                $tmpData[] = $value;
+            }
+            $do['data']= $tmpData;
+        }*/
+
         return $do;
     }
 
