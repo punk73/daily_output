@@ -251,11 +251,13 @@ class mainController extends Controller
 
         $do = $do->get();
 
+        // return count($do);
 
         $data = [];
         $i = 0;
         foreach ($do as $key => $value) {
             # code...
+
             $username = User::find($value->users_id);
             $username = $username['name'];
 
@@ -291,6 +293,10 @@ class mainController extends Controller
                 $akhir = $akhir + 11;
                }
                //username ganti, 
+               if (!isset( $do[$awal]) ) {
+                   continue;
+               }
+               
                $username = User::find($do[$awal]->users_id);
                $username = $username['name'];
 
@@ -318,9 +324,13 @@ class mainController extends Controller
                 ];
 
                 $data[] = $total;
+
             }
 
             $data[] = $row;
+            
+            
+
             $i++; //add counter
         }
         $range = 'A1:T'.(count($data)+1);
