@@ -142,7 +142,7 @@ class mainController extends Controller
         //make variable $time based on shift
         $shiftA = [
             ['id'=>1, 'time'=> '06-07', 'durasi'=> 60, 'jumat'=> 60 ],
-            ['id'=>2, 'time'=> '07-08', 'durasi'=> 60, 'jumat'=> 50 ],
+            ['id'=>2, 'time'=> '07-08', 'durasi'=> 50, 'jumat'=> 50 ],
             ['id'=>3, 'time'=> '08-09', 'durasi'=> 50, 'jumat'=> 50 ],
             ['id'=>4, 'time'=> '09-10', 'durasi'=> 60, 'jumat'=> 60 ],
             ['id'=>5, 'time'=> '10-11', 'durasi'=> 50, 'jumat'=> 50 ],
