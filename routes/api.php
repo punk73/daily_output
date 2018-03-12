@@ -54,6 +54,7 @@ $api->version('v1', function (Router $api) {
     Route::prefix('daily_outputs')->group(function(){
         Route::get('/', 'mainController@index' );
         Route::get('/download', 'mainController@download' );
+        Route::get('/add_lembur', 'mainController@add_lembur' );
         Route::post('/', 'mainController@store' );
         Route::get('/{id}', 'mainController@show' );
         Route::delete('/{id}', 'mainController@delete' );

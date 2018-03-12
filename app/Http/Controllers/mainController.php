@@ -150,12 +150,17 @@ class mainController extends Controller
             ['id'=>7, 'time'=> '12-13', 'durasi'=> 25, 'jumat'=> 10 ],
             ['id'=>8, 'time'=> '13-14', 'durasi'=> 60, 'jumat'=> 50 ],
             ['id'=>9, 'time'=> '14-15', 'durasi'=> 60, 'jumat'=> 60 ],
-            ['id'=>10, 'time'=> '15-16', 'durasi'=> 5, 'jumat'=> 30 ]
+            ['id'=>10, 'time'=> '15-16', 'durasi'=> 5, 'jumat'=> 30 ],
+            ['id'=>11, 'time'=> '16-17', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>12, 'time'=> '17-18', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>13, 'time'=> '18-19', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>14, 'time'=> '19-20', 'durasi'=> 60, 'jumat'=> 60 ],
+
         ];
 
         $shiftB = [
             ['id'=>11, 'time'=> '16-17', 'durasi'=> 60, 'jumat'=> 60],
-            ['id'=>12, 'time'=> '17-18', 'durasi'=> 60, 'jumat'=> 50],
+            ['id'=>12, 'time'=> '17-18', 'durasi'=> 50, 'jumat'=> 50],
             ['id'=>13, 'time'=> '18-19', 'durasi'=> 50, 'jumat'=> 50],
             ['id'=>14, 'time'=> '19-20', 'durasi'=> 60, 'jumat'=> 60],
             ['id'=>15, 'time'=> '20-21', 'durasi'=> 50, 'jumat'=> 50],
@@ -163,7 +168,11 @@ class mainController extends Controller
             ['id'=>17, 'time'=> '22-23', 'durasi'=> 25, 'jumat'=> 10],
             ['id'=>18, 'time'=> '23-24', 'durasi'=> 60, 'jumat'=> 50],
             ['id'=>19, 'time'=> '00-01', 'durasi'=> 60, 'jumat'=> 60],
-            ['id'=>20, 'time'=> '01-02', 'durasi'=> 5, 'jumat'=> 30]
+            ['id'=>20, 'time'=> '01-02', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>21, 'time'=> '02-03', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>22, 'time'=> '03-04', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>23, 'time'=> '04-05', 'durasi'=> 60, 'jumat'=> 60]
+
         ];
 
         if ( $shift == 'A' || $shift == 'a' ){
@@ -210,6 +219,117 @@ class mainController extends Controller
 
         return $result;
     }
+
+    public function add_lembur(Request $request){
+        $line = [
+            ["id"=>1, "name"=> '1'],
+            ["id"=>2, "name"=> '2'],
+            ["id"=>3, "name"=> '3'],
+            ["id"=>4, "name"=> '4'],
+            ["id"=>5, "name"=> '5'],
+            ["id"=>6, "name"=> '6'],
+            ["id"=>7, "name"=> '7'],
+            ["id"=>8, "name"=> '8'],
+            ["id"=>9, "name"=> '9'],
+            ["id"=>10, "name"=> '10'],
+            ["id"=>11, "name"=> '11'],
+            ["id"=>12, "name"=> '12'],
+            ["id"=>13, "name"=> '13'],
+            ["id"=>14, "name"=> '14'],
+            ["id"=>15, "name"=> '15'],
+            ["id"=>16, "name"=> '16'],
+            ["id"=>17, "name"=> '17'],
+            ["id"=>18, "name"=> '18'],
+            ["id"=>19, "name"=> '19'],
+            ["id"=>20, "name"=> '20'],
+            ["id"=>21, "name"=> '21'],
+            ["id"=>22, "name"=> '22'],
+            ["id"=>23, "name"=> '23'],
+            ["id"=>24, "name"=> '24'],
+            ["id"=>25, "name"=> '25'],
+            ["id"=>26, "name"=> 'TNR.1'],
+            ["id"=>27, "name"=> 'TNR.2'],
+            ["id"=>28, "name"=> 'BAL.1'],
+            ["id"=>29, "name"=> 'BAL.2']
+        ];
+        $tanggal = date('Y-m-d');
+        $shift = 'A';
+
+        foreach ($line as $key => $value) {
+            $this->lembur($tanggal, $shift, $value['name'], 1 );
+        }
+
+        return [
+            'status' =>"OK",
+            'message' => 'OK'
+        ];
+
+    }
+
+    public function lembur($tanggal, $shift, $line_name, $users_id ){
+        // get parameter,        
+        //make variable $time based on shift
+        $shiftA = [
+            ['id'=>11, 'time'=> '16-17', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>12, 'time'=> '17-18', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>13, 'time'=> '18-19', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>14, 'time'=> '19-20', 'durasi'=> 60, 'jumat'=> 60 ],
+            ['id'=>15, 'time'=> '20-21', 'durasi'=> 60, 'jumat'=> 60 ],
+
+        ];
+
+        $shiftB = [
+            ['id'=>21, 'time'=> '02-03', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>22, 'time'=> '03-04', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>23, 'time'=> '04-05', 'durasi'=> 60, 'jumat'=> 60]
+
+        ];
+
+        if ( $shift == 'A' || $shift == 'a' ){
+            $arrayShift = $shiftA;
+        }else {
+            $arrayShift = $shiftB;
+        }
+
+        //looping based on shift
+        $result = [];
+        foreach ($arrayShift as $key => $value) {
+            # code...
+            //minute ambil dari durasi atau jumat, tergantung dari hari jumat atau bukan.
+            $minute = ( $this->isFriday( $tanggal) ) ? $value['jumat'] : $value['durasi'] ;
+            //store to database.
+            $Daily_output = new Daily_output;
+
+            $Daily_output->time = $value['time'];
+            $Daily_output->minute = $minute;
+            $Daily_output->users_id = $users_id;
+            $Daily_output->tanggal = $tanggal;
+            $Daily_output->shift = $shift;
+            $Daily_output->line_name = $line_name;
+
+            if(!$Daily_output->minute){$Daily_output->minute = 60; } //set default value for minute
+            if(!$Daily_output->target_sop){$Daily_output->target_sop = 0; }
+            if(!$Daily_output->osc_output){$Daily_output->osc_output = 0; }
+            if(!$Daily_output->plus_minus){$Daily_output->plus_minus = 0; }
+            if(!$Daily_output->lost_hour){$Daily_output->lost_hour = 0; }
+            if(!$Daily_output->board_delay){$Daily_output->board_delay = 0; }
+            if(!$Daily_output->part_delay){$Daily_output->part_delay = 0; }
+            if(!$Daily_output->eqp_trouble){$Daily_output->eqp_trouble = 0; }
+            if(!$Daily_output->quality_problem_delay){$Daily_output->quality_problem_delay = 0; }
+            if(!$Daily_output->bal_problem){$Daily_output->bal_problem = 0; }
+            if(!$Daily_output->others){$Daily_output->others = 0; }
+            if(!$Daily_output->support){$Daily_output->support = 0; }
+            if(!$Daily_output->change_model){$Daily_output->change_model = 0; }
+            if(!$Daily_output->users_id){$Daily_output->users_id = null; }
+
+            $Daily_output->save();
+
+            $result[] = $Daily_output;
+        }
+
+        return $result;
+    }
+
 
     public function isFriday($tanggal){
         $timestamp = strtotime($tanggal); //buat object tanggal php
