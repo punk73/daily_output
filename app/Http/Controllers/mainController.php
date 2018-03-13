@@ -45,7 +45,12 @@ class mainController extends Controller
         }
 
         //order by time.
-        $do = $do->orderBy('time', 'asc');
+        if ($req->shift == 'B') {
+            # code...
+        $do = $do->orderByRaw("CASE time when '16-17' then 1 when '17-18' then 2 when '18-19' then 3 when '19-20' then 4 when '20-21' then 5 when '21-22' then 6 when '22-23' then 7 when '23-24' then 8 when '00-01' then 9 when '01-02' then 10 when '02-03' then 11 else 12 end  ");
+        }else{
+            $do = $do->orderBy('time', 'asc');
+        }
 
         //pagination
         if ( $req->limit !=null){
