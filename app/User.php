@@ -5,6 +5,7 @@ namespace App;
 use Hash;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Default_line;
 
 class User extends Authenticatable
 {
@@ -38,4 +39,11 @@ class User extends Authenticatable
     {
         $this->attributes['password'] = Hash::make($value);
     }
+
+    public function default_line(){
+        // return Default_line::all();
+        return $this->hasOne('App\Default_line', 'user_id');
+    }
+
+
 }

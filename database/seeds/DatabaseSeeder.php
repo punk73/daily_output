@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(Daily_output_control_seeder::class);
-        $this->call(Lost_time_control_seeder::class);
-
+        //$this->call(Lost_time_control_seeder::class);
+        $this->call(Default_line_seeder::class);
     }
 }

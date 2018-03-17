@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\LoginRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -33,5 +34,12 @@ class LoginController extends Controller
                 'status' => 'ok',
                 'token' => $token
             ]);
+    }
+
+    public function me(LoginRequest $request, JWTAuth $JWTAuth){
+        
+        /*return response()->json(
+            Auth::class
+        );*/
     }
 }

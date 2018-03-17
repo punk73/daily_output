@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDefaultlines extends Migration
+class CreateTableDefaultLines extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateDefaultlines extends Migration
      */
     public function up()
     {
-        Schema::create('defaultlines', function (Blueprint $table) {
+        Schema::create('default_lines', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('line_id');
-            $table->varchar('line_name');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateDefaultlines extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('defaultlines');
+        Schema::dropIfExists('default_lines');
     }
 }
