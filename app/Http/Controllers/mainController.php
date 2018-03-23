@@ -736,4 +736,94 @@ class mainController extends Controller
             ];
         }
     }
+
+    public function getAllLinePerDay(Request $request){
+        $daily_outputs = Daily_output::select(DB::raw(
+            'tanggal,
+             shift,
+             line_name,
+             sum(target_sop) as target_sop,
+             sum(osc_output) as osc_output,
+             sum(plus_minus) as plus_minus,
+             sum(lost_hour) as lost_hour,
+             sum(board_delay) as board_delay,
+             sum(part_delay) as part_delay,
+             sum(eqp_trouble) as eqp_trouble,
+             sum(quality_problem_delay) as quality_problem_delay,
+             sum(bal_problem) as bal_problem,
+             sum(support) as support,
+             sum(change_model) as change_model
+            '
+        ))->groupBy('tanggal')
+        ->groupBy('shift')
+        ->groupBy('line_name');
+
+        if (isset($request->shift)) {
+            $daily_outputs = $daily_outputs->where('shift', '=', $request->shift );
+        }
+
+        if (isset($request->tanggal)) {
+            $daily_outputs = $daily_outputs->where('tanggal', '=', $request->tanggal );
+        }else{
+            $request->tanggal = date('Y-m-d');
+            $daily_outputs = $daily_outputs->where('tanggal', '=', $request->tanggal );
+        }        
+
+        try {
+            $message = 'OK';
+            $daily_outputs = $daily_outputs->get();
+        } catch (Exception $e) {
+            $message = $e;
+        }
+
+        return [
+            '_meta' => [
+                'count' => count($daily_outputs),
+                'message' => $message
+            ],
+            'data' => $daily_outputs
+        ];
+    }
+
+    public function getAllLinePerMonth(Request $request){
+        $daily_outputs = Daily_output::select(DB::raw(
+            'MONTH(tanggal) as month,
+             line_name,
+             sum(target_sop) as target_sop,
+             sum(osc_output) as osc_output,
+             sum(plus_minus) as plus_minus,
+             sum(lost_hour) as lost_hour,
+             sum(board_delay) as board_delay,
+             sum(part_delay) as part_delay,
+             sum(eqp_trouble) as eqp_trouble,
+             sum(quality_problem_delay) as quality_problem_delay,
+             sum(bal_problem) as bal_problem,
+             sum(support) as support,
+             sum(change_model) as change_model
+            '
+        ))->groupBy('month')
+        ->groupBy('line_name');
+
+        if (isset($request->month)) {
+            $daily_outputs = $daily_outputs->whereMonth('tanggal', '=', $request->month );
+        }else{
+            $request->month = date('m');
+            $daily_outputs = $daily_outputs->whereMonth('tanggal', '=', $request->month );
+        }        
+
+        try {
+            $message = 'OK';
+            $daily_outputs = $daily_outputs->get();
+        } catch (Exception $e) {
+            $message = $e;
+        }
+
+        return [
+            '_meta' => [
+                'count' => count($daily_outputs),
+                'message' => $message
+            ],
+            'data' => $daily_outputs
+        ];
+    }
 }

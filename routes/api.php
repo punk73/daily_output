@@ -43,9 +43,6 @@ $api->version('v1', function (Router $api) {
                 return $user->toArray();
             }
         );
-
-
-
     });
 
     $api->get('hello', function() {
@@ -59,6 +56,9 @@ $api->version('v1', function (Router $api) {
         Route::get('/', 'mainController@index' );
         Route::get('/download', 'mainController@download' );
         Route::get('/add_lembur', 'mainController@add_lembur' );
+        Route::get('/all_line_perday', 'mainController@getAllLinePerDay' );
+        Route::get('/all_line_permonth', 'mainController@getAllLinePerMonth' );
+
         Route::post('/', 'mainController@store' );
         Route::get('/{id}', 'mainController@show' );
         Route::delete('/{id}', 'mainController@delete' );
@@ -75,9 +75,9 @@ $api->version('v1', function (Router $api) {
         Route::put('/{id}', 'LostTimeController@update' );
         Route::get('/perline', 'LostTimeController@getPerLine' );
         Route::get('/permonth', 'LostTimeController@getPerMonth' );
-
-
     });
+
+
 
     //routes for daily repairs
     Route::prefix('daily_repairs')->group(function(){
@@ -89,17 +89,18 @@ $api->version('v1', function (Router $api) {
 
         Route::get('/perline', 'DailyRepairController@getPerLine' );
         Route::get('/permonth', 'DailyRepairController@getPerMonth' );
+
         Route::get('/{id}', 'DailyRepairController@show' ); //it should be the last. since we need to get per month and per line
-
-
-        
     });
 
     Route::prefix('qualities')->group(function(){
         Route::get('/', 'QualityController@index' );
         Route::get('/dic', 'QualityController@getDIC' );
         // Route::get('/raw', 'QualityController@index' );
-
     });
 
+        
+
 });
+
+
