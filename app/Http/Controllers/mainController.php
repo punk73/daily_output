@@ -743,17 +743,17 @@ class mainController extends Controller
             'tanggal,
              shift,
              line_name,
-             CAST(sum(target_sop) as INT ) as target_sop,
-             CAST(sum(osc_output)  as INT ) as osc_output,
-             CAST(sum(plus_minus) as INT ) as plus_minus,
-             CAST(sum(lost_hour) as INT ) as lost_hour,
-             CAST(sum(board_delay) as INT ) as board_delay,
-             CAST(sum(part_delay) as INT ) as part_delay,
-             CAST(sum(eqp_trouble) as INT ) as eqp_trouble,
-             CAST(sum(quality_problem_delay)  as INT ) as quality_problem_delay,
-             CAST(sum(bal_problem)  as INT ) as bal_problem,
-             CAST(sum(support)  as INT ) as support,
-             CAST(sum(change_model)  as INT ) as change_model
+             sum(target_sop) as target_sop,
+             sum(osc_output) as osc_output,
+             sum(plus_minus) as plus_minus,
+             sum(lost_hour) as lost_hour,
+             sum(board_delay) as board_delay,
+             sum(part_delay) as part_delay,
+             sum(eqp_trouble) as eqp_trouble,
+             sum(quality_problem_delay) as quality_problem_delay,
+             sum(bal_problem) as bal_problem,
+             sum(support) as support,
+             sum(change_model) as change_model
             '
         ))->groupBy('tanggal')
         ->groupBy('shift')
@@ -794,17 +794,17 @@ class mainController extends Controller
         $daily_outputs = Daily_output::select(DB::raw(
             'MONTH(tanggal) as month,
              line_name,
-             CAST(sum(target_sop) as INT ) as target_sop,
-             CAST(sum(osc_output)  as INT ) as osc_output,
-             CAST(sum(plus_minus) as INT ) as plus_minus,
-             CAST(sum(lost_hour) as INT ) as lost_hour,
-             CAST(sum(board_delay) as INT ) as board_delay,
-             CAST(sum(part_delay) as INT ) as part_delay,
-             CAST(sum(eqp_trouble) as INT ) as eqp_trouble,
-             CAST(sum(quality_problem_delay)  as INT ) as quality_problem_delay,
-             CAST(sum(bal_problem)  as INT ) as bal_problem,
-             CAST(sum(support)  as INT ) as support,
-             CAST(sum(change_model)  as INT ) as change_model
+             sum(target_sop) as target_sop,
+             sum(osc_output) as osc_output,
+             sum(plus_minus) as plus_minus,
+             sum(lost_hour) as lost_hour,
+             sum(board_delay) as board_delay,
+             sum(part_delay) as part_delay,
+             sum(eqp_trouble) as eqp_trouble,
+             sum(quality_problem_delay) as quality_problem_delay,
+             sum(bal_problem) as bal_problem,
+             sum(support) as support,
+             sum(change_model) as change_model
             '
         ))->groupBy('month')
         ->groupBy('line_name');
