@@ -771,7 +771,11 @@ class mainController extends Controller
 
         try {
             $message = 'OK';
-            $daily_outputs = $daily_outputs->get();
+            $daily_outputs = $daily_outputs
+            // ->orderByRaw('case shift when "A" then 1 else 2 end')
+            ->orderBy('shift')
+            ->orderBy('line_name')
+            ->get();
         } catch (Exception $e) {
             $message = $e;
         }
@@ -813,7 +817,7 @@ class mainController extends Controller
 
         try {
             $message = 'OK';
-            $daily_outputs = $daily_outputs->get();
+            $daily_outputs = $daily_outputs->orderBy('line_name')->get();
         } catch (Exception $e) {
             $message = $e;
         }
