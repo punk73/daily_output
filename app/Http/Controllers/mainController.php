@@ -752,6 +752,7 @@ class mainController extends Controller
              sum(eqp_trouble) as eqp_trouble,
              sum(quality_problem_delay) as quality_problem_delay,
              sum(bal_problem) as bal_problem,
+             sum(others) as others,
              sum(support) as support,
              sum(change_model) as change_model
             '
@@ -759,7 +760,7 @@ class mainController extends Controller
         ->groupBy('shift')
         ->groupBy('line_name');
 
-        if (isset($request->shift)) {
+        if (isset($request->shift) && $request->shift != null ) {
             $daily_outputs = $daily_outputs->where('shift', '=', $request->shift );
         }
 
@@ -780,6 +781,21 @@ class mainController extends Controller
         } catch (Exception $e) {
             $message = $e;
         }
+
+        // setting efisiensi & ganti jadi int
+        $daily_outputs->each(function($model){
+            $model->target_sop = (int) $model->target_sop;
+            $model->osc_output = (int) $model->osc_output;
+            $model->plus_minus = (int) $model->plus_minus;
+            $model->lost_hour = (int) $model->lost_hour;
+            
+            if ($model->target_sop != 0) {
+                $model->efisiensi = round( ($model->osc_output / $model->target_sop) * 100, 2 ) ;
+            }else{
+                $model->efisiensi = 0;
+            }
+
+        });
 
         return [
             '_meta' => [
@@ -803,11 +819,12 @@ class mainController extends Controller
              sum(eqp_trouble) as eqp_trouble,
              sum(quality_problem_delay) as quality_problem_delay,
              sum(bal_problem) as bal_problem,
+             sum(others) as others,
              sum(support) as support,
              sum(change_model) as change_model
             '
         ))->groupBy('month')
-        ->groupBy('line_name');
+        ->groupBy('line_name')->orderBy('line_name', 'asc');
 
         if (isset($request->month)) {
             $daily_outputs = $daily_outputs->whereMonth('tanggal', '=', $request->month );
@@ -818,10 +835,25 @@ class mainController extends Controller
 
         try {
             $message = 'OK';
-            $daily_outputs = $daily_outputs->orderBy('line_name', 'asc')->get();
+            $daily_outputs = $daily_outputs->get();
         } catch (Exception $e) {
             $message = $e;
         }
+
+        // get efisiensi
+        $daily_outputs->each(function($model){
+            $model->target_sop = (int) $model->target_sop;
+            $model->osc_output = (int) $model->osc_output;
+            $model->plus_minus = (int) $model->plus_minus;
+            $model->lost_hour = (int) $model->lost_hour;
+            
+            if ($model->target_sop != 0) {
+                $model->efisiensi = round( ($model->osc_output / $model->target_sop) * 100, 2 );
+            }else{
+                $model->efisiensi = 0;
+            }
+
+        });
 
         return [
             '_meta' => [
