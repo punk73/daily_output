@@ -185,16 +185,16 @@ class mainController extends Controller
         ];
 
         $shiftB = [
-            ['id'=>11, 'time'=> '16-17', 'durasi'=> 60, 'jumat'=> 60],
-            ['id'=>12, 'time'=> '17-18', 'durasi'=> 50, 'jumat'=> 50],
-            ['id'=>13, 'time'=> '18-19', 'durasi'=> 50, 'jumat'=> 50],
+            ['id'=>11, 'time'=> '16-17', 'durasi'=> 55, 'jumat'=> 55],
+            ['id'=>12, 'time'=> '17-18', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>13, 'time'=> '18-19', 'durasi'=> 25, 'jumat'=> 25],
             ['id'=>14, 'time'=> '19-20', 'durasi'=> 60, 'jumat'=> 60],
             ['id'=>15, 'time'=> '20-21', 'durasi'=> 50, 'jumat'=> 50],
             ['id'=>16, 'time'=> '21-22', 'durasi'=> 60, 'jumat'=> 60],
-            ['id'=>17, 'time'=> '22-23', 'durasi'=> 25, 'jumat'=> 10],
-            ['id'=>18, 'time'=> '23-24', 'durasi'=> 60, 'jumat'=> 50],
+            ['id'=>17, 'time'=> '22-23', 'durasi'=> 40, 'jumat'=> 40],
+            ['id'=>18, 'time'=> '23-24', 'durasi'=> 60, 'jumat'=> 60],
             ['id'=>19, 'time'=> '00-01', 'durasi'=> 60, 'jumat'=> 60],
-            ['id'=>20, 'time'=> '01-02', 'durasi'=> 60, 'jumat'=> 60],
+            ['id'=>20, 'time'=> '01-02', 'durasi'=> 10, 'jumat'=> 10],
             ['id'=>21, 'time'=> '02-03', 'durasi'=> 60, 'jumat'=> 60],
             ['id'=>22, 'time'=> '03-04', 'durasi'=> 60, 'jumat'=> 60],
             ['id'=>23, 'time'=> '04-05', 'durasi'=> 60, 'jumat'=> 60]
