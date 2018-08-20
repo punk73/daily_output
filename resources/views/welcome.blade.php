@@ -66,9 +66,7 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-           
             <embed src="{{url('Work_Instuction.pdf')}}" width="100%" height="100%" type='application/pdf'>
-                
         </div>
     </body>
 </html>
