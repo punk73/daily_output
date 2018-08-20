@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\User;
 
 class UsersTableSeeder extends Seeder
 {
@@ -12,7 +13,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         for ($i=0; $i < 25 ; $i++) {
-        	$no = str_pad($i, 2, '0'); 
+        	$no = $i;//str_pad($i, 2, '0'); 
         	$name = 'ma'.$no;
         	$password = $name.$name;
 
