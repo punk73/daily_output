@@ -27,7 +27,7 @@ class UsersTableSeeder extends Seeder
 
             $defaultline = new Default_line();
             $defaultline->user_id = $user->id;
-            $defaultline->line_id = $i;
+            $defaultline->line_id = $user->id;
             $defaultline->save();
 
         }
