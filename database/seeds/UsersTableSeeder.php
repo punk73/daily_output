@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\User;
+use App\Default_line;
 
 class UsersTableSeeder extends Seeder
 {
@@ -23,6 +24,11 @@ class UsersTableSeeder extends Seeder
         	]);
 
         	$user->save();
+
+            $defaultline = new Default_line();
+            $defaultline->user_id = $user->id;
+            $defaultline->line_id = $i;
+
         }
     }
 }
