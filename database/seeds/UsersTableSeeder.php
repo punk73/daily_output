@@ -13,7 +13,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=0; $i < 25 ; $i++) {
+        for ($i=0; $i <= 25 ; $i++) {
         	$no = $i;//str_pad($i, 2, '0'); 
         	$name = 'ma'.$no;
         	$password = $name.$name;
@@ -28,6 +28,7 @@ class UsersTableSeeder extends Seeder
             $defaultline = new Default_line();
             $defaultline->user_id = $user->id;
             $defaultline->line_id = $i;
+            $defaultline->save();
 
         }
     }
