@@ -11,6 +11,17 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected static function boot() { //cascade on soft delete
+        parent::boot();
+
+        static::created(function($user) {
+            $defaultLine = new Default_line;
+            $defaultLine->user_id = $user->id;
+            $defaultLine->line_id = ( isset($user->default_line) )? $user->default_line : 1;
+            $defaultLine->save();
+        });
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -44,6 +55,5 @@ class User extends Authenticatable
         // return Default_line::all();
         return $this->hasOne('App\Default_line', 'user_id');
     }
-
 
 }
