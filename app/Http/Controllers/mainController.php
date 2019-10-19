@@ -557,7 +557,7 @@ class mainController extends Controller
         return [
             '_meta'=>[
                 'message'=> $message ,
-                'count'=> count($do)
+                'count'=> ($do == null) ? 0 : 1,
             ],
 
             'data'=> $do
