@@ -730,7 +730,7 @@ class mainController extends Controller
                 '_meta'=>[
                     'status'=> "SUCCESS",
                     'userMessage'=> "Data updated",
-                    'count'=>count($Daily_output)
+                    'count'=> 1 //count($Daily_output)
                 ],
                  'data'=>$Daily_output
             ];
